@@ -1,0 +1,218 @@
+/* WeightTracker — matches original weigh-in card */
+.card {
+  background: var(--card, #ffffff);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(30, 36, 24, 0.07);
+  border: 1px solid var(--border, #d4d8cd);
+  text-align: center;
+}
+
+.cardTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: #dde4d4;
+}
+
+.inputRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.weightInput {
+  width: 80px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  border: none;
+  border-bottom: 2px solid var(--border, #d4d8cd);
+  outline: none;
+  font-family: inherit;
+  color: var(--text, #1e2418);
+  background: transparent;
+}
+
+.unitSelect {
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text-light, #6b7360);
+  background: transparent;
+  cursor: pointer;
+}
+
+.progress {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.delta {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.deltaDown {
+  color: #3d8b5e;
+}
+
+.deltaUp {
+  color: #c0392b;
+}
+
+.deltaNone {
+  color: var(--text-light, #6b7360);
+}
+
+.deltaFirst {
+  color: var(--text-light, #6b7360);
+  font-size: 11px;
+}
+
+.prevLabel {
+  font-size: 10px;
+  color: var(--text-light, #6b7360);
+  margin-top: 2px;
+}
+
+.barChart {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  align-items: flex-end;
+  height: 40px;
+}
+
+.bar {
+  border-radius: 3px;
+  transition: height 0.3s;
+}
+
+.historyLog {
+  margin-top: 12px;
+  max-height: 150px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  border-top: 1px solid var(--border, #d4d8cd);
+  padding-top: 8px;
+}
+
+.historyTitle {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent, #4a5c3e);
+  margin-bottom: 6px;
+}
+
+.historyRows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.historyRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  background: #f8f8f5;
+}
+
+.historyRow.today {
+  background: var(--accent-light, #dfe6d8);
+  font-weight: 600;
+}
+
+.historyRowDate {
+  min-width: 90px;
+  flex: 1;
+}
+
+.historyRowDateToday {
+  color: var(--accent, #4a5c3e);
+}
+
+.historyRowDateOther {
+  color: var(--text-light, #6b7360);
+}
+
+.historyRowWeight {
+  font-weight: 700;
+  color: var(--text, #1e2418);
+}
+
+.historyRowUnit {
+  font-weight: 400;
+  font-size: 10px;
+  color: var(--text-light, #6b7360);
+}
+
+.historyRowDiff {
+  min-width: 40px;
+  text-align: right;
+}
+
+.historyRowDiffDown {
+  color: #3d8b5e;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.historyRowDiffUp {
+  color: #c0392b;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.historyRowDiffNone {
+  color: var(--text-light, #6b7360);
+  font-size: 10px;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 2px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.deleteBtn:hover {
+  color: #c0392b;
+}
+
+.subtitle {
+  margin-top: 6px;
+  font-size: 10px;
+  color: var(--text-light, #6b7360);
+}

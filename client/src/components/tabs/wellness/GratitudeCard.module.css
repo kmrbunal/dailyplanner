@@ -1,0 +1,67 @@
+/* GratitudeCard — matches original gratitude card styles */
+.card {
+  background: var(--card, #ffffff);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(30, 36, 24, 0.07);
+  border: 1px solid var(--border, #d4d8cd);
+  text-align: center;
+}
+
+.cardTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: var(--gold-light, #f2efdb);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.itemNumber {
+  color: var(--gold, #8b7d3c);
+}
+
+.itemInput {
+  flex: 1;
+  border: none;
+  border-bottom: 1px solid var(--border, #d4d8cd);
+  outline: none;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 4px 0;
+  color: var(--text, #1e2418);
+  background: transparent;
+}
+
+.itemInput::placeholder {
+  color: #ccc;
+}

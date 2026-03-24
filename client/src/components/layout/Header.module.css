@@ -1,0 +1,199 @@
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 32px 24px;
+  background: linear-gradient(135deg, #5e7550, #3a4a2e, #2f3d27);
+  border-radius: 20px;
+  color: white;
+  box-shadow: 0 4px 20px rgba(47, 61, 39, 0.3);
+}
+
+.header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+.dateDisplay {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 500;
+  opacity: 0.9;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  padding: 4px 12px;
+  border-radius: 8px;
+}
+
+.dateDisplay:hover {
+  opacity: 0.7;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dateNav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.dateNav button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.dateNav button:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.newDayBtn {
+  margin-top: 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  padding: 8px 24px;
+  border-radius: 24px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+
+.newDayBtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+/* Live Clock */
+.liveClock {
+  font-size: 13px;
+  font-weight: 400;
+  opacity: 0.75;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+
+/* Data Management Buttons in Header */
+.dataActions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.dataBtn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.85);
+  padding: 5px 14px;
+  border-radius: 16px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.dataBtn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+}
+
+/* Quote Bar */
+.quoteBar {
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: var(--text-light);
+  font-size: 15px;
+  margin-bottom: 28px;
+  padding: 0 20px;
+  line-height: 1.6;
+}
+
+/* ========== RESPONSIVE ========== */
+
+/* Mobile */
+@media (max-width: 700px) {
+  .header {
+    padding: 24px 16px;
+    border-radius: 14px;
+  }
+
+  .header h1 {
+    font-size: 22px;
+    letter-spacing: 2px;
+  }
+
+  .dateDisplay {
+    font-size: 14px;
+  }
+
+  .newDayBtn {
+    font-size: 12px;
+    padding: 7px 18px;
+  }
+
+  .quoteBar {
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 400px) {
+  .header {
+    padding: 20px 12px;
+  }
+
+  .header h1 {
+    font-size: 18px;
+  }
+
+  .dateNav button {
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+  }
+
+  .dataActions {
+    flex-wrap: wrap;
+  }
+
+  .dataBtn {
+    font-size: 10px;
+    padding: 4px 10px;
+  }
+}
+
+/* Print */
+@media print {
+  .header {
+    background: var(--accent) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .newDayBtn {
+    display: none;
+  }
+}

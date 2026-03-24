@@ -1,0 +1,143 @@
+/* Inspire Tab — Something Valuable Section */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.valuableSection {
+  grid-column: span 2;
+  background: linear-gradient(135deg, #f0f2ea, #e6ead8);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.valuableSection::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 100px;
+  height: 100px;
+  background: rgba(176, 162, 110, 0.1);
+  border-radius: 50%;
+}
+
+.cardTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold);
+}
+
+.cardTitle .icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: var(--gold-light);
+}
+
+.valuableCategory {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--gold);
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+
+.valuableTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.valuableBody {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #555;
+}
+
+.valuableFooter {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.valuableSource {
+  font-size: 12px;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.valuableRefresh {
+  background: none;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.valuableRefresh:hover {
+  background: var(--accent);
+  color: white;
+}
+
+/* ========== RESPONSIVE ========== */
+
+@media (max-width: 900px) {
+  .valuableSection {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 700px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .valuableSection {
+    padding: 20px;
+  }
+
+  .valuableTitle {
+    font-size: 16px;
+  }
+
+  .valuableBody {
+    font-size: 13px;
+  }
+}
+
+@media print {
+  .valuableSection {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+}

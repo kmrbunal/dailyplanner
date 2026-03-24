@@ -1,0 +1,78 @@
+/* MoodCard — matches original mood card styles */
+.card {
+  background: var(--card, #ffffff);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(30, 36, 24, 0.07);
+  border: 1px solid var(--border, #d4d8cd);
+  text-align: center;
+}
+
+.cardTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: #e8eddf;
+}
+
+.moodOptions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.moodBtn {
+  font-size: 28px;
+  background: none;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.moodBtn:hover {
+  transform: scale(1.15);
+}
+
+.moodBtn.selected {
+  border-color: var(--accent, #4a5c3e);
+  background: var(--accent-light, #dfe6d8);
+}
+
+@media (max-width: 700px) {
+  .moodBtn {
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 400px) {
+  .moodBtn {
+    font-size: 20px;
+    width: 34px;
+    height: 34px;
+  }
+}

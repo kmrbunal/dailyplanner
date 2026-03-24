@@ -1,0 +1,162 @@
+/* Account Tab — Profile + Data Summary */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.card {
+  grid-column: span 2;
+  background: var(--card);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.cardTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cardTitle .icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: var(--accent-light);
+}
+
+/* Form Fields */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.fieldInput {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: white;
+  box-sizing: border-box;
+}
+
+.fieldInput:disabled {
+  background: #f0f0ee;
+  color: var(--text-light);
+}
+
+.fieldSelect {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: white;
+  box-sizing: border-box;
+}
+
+.saveBtn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: opacity 0.2s;
+  width: 100%;
+}
+
+.saveBtn:hover {
+  opacity: 0.9;
+}
+
+.saveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.profileStatus {
+  font-size: 12px;
+  color: var(--accent);
+  text-align: center;
+  min-height: 18px;
+}
+
+/* Data Summary */
+.dataSummary {
+  font-size: 13px;
+  color: var(--text-light);
+  line-height: 1.8;
+  margin-top: 8px;
+}
+
+.dataSummary strong {
+  color: var(--text);
+}
+
+/* ========== RESPONSIVE ========== */
+
+@media (max-width: 700px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .card {
+    grid-column: span 1;
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  .cardTitle {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+  }
+}
+
+@media print {
+  .card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+
+  .saveBtn {
+    display: none;
+  }
+}

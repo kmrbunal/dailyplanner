@@ -1,0 +1,111 @@
+/* Confirmation Overlay */
+.confirmOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.confirmOverlay.show {
+  display: flex;
+}
+
+.confirmBox {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  animation: popIn 0.25s ease;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.confirmBox h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.confirmBox p {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.confirmBtns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.confirmBtns button {
+  padding: 10px 28px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.confirmCancel {
+  background: var(--accent-light);
+  color: var(--text);
+}
+
+.confirmCancel:hover {
+  background: var(--border);
+}
+
+.confirmGo {
+  background: #8b3a3a;
+  color: white;
+}
+
+.confirmGo:hover {
+  background: #733030;
+}
+
+/* ========== RESPONSIVE ========== */
+
+/* Mobile */
+@media (max-width: 700px) {
+  .confirmBox {
+    padding: 24px 20px;
+    border-radius: 16px;
+  }
+
+  .confirmBox h3 {
+    font-size: 16px;
+  }
+
+  .confirmBox p {
+    font-size: 13px;
+  }
+
+  .confirmBtns button {
+    padding: 9px 22px;
+    font-size: 13px;
+  }
+}

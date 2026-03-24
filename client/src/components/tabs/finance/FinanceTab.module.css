@@ -1,0 +1,772 @@
+/* ========== FINANCE TAB ========== */
+
+/* ---------- Shared Section Heading ---------- */
+.sectionLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+/* ---------- Monthly Starting Funds ---------- */
+.fundsRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+
+.fundsRow:nth-child(odd) {
+  background: var(--accent-light);
+}
+
+.fundsRow:nth-child(even) {
+  background: #f5f6f0;
+}
+
+.fundsIcon {
+  font-size: 16px;
+}
+
+.fundsLabel {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.currencySign {
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.fundsInput {
+  width: 100px;
+  text-align: right;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  color: var(--accent-dark);
+  background: transparent;
+}
+
+.fundsInput:disabled {
+  opacity: 0.7;
+}
+
+/* ---------- Summary Grid (Starting Budget / Month Spent) ---------- */
+.summaryGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.summaryBox {
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+
+.summaryBoxLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.summaryBoxValue {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* ---------- Daily Balance Display ---------- */
+.balanceGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.balanceBox {
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+
+.balanceLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.balanceValue {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.balanceNote {
+  font-size: 9px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+/* ---------- Day Finance Snapshot (past days) ---------- */
+.snapshot {
+  background: linear-gradient(135deg, #e8eddf, #dce5d0);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  border: 1px solid #c0d0a8;
+}
+
+.snapshotTitle {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #4a5c3e;
+  margin-bottom: 10px;
+}
+
+.snapshotGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  text-align: center;
+}
+
+.snapshotLabel {
+  font-size: 9px;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.snapshotValue {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* ---------- Expense Row ---------- */
+.expenseRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f5f6f0;
+  border-radius: 10px;
+}
+
+.expenseSelect {
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--text-light);
+  background: transparent;
+  cursor: pointer;
+  min-width: 110px;
+}
+
+.expenseSelect:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.expenseAmountWrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.expenseCurrency {
+  font-size: 13px;
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+
+.expenseInput {
+  flex: 1;
+  max-width: 100px;
+  text-align: right;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-dark);
+  background: transparent;
+}
+
+.expenseInput:disabled {
+  opacity: 0.7;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0 4px;
+  transition: color 0.2s;
+}
+
+.deleteBtn:hover {
+  color: #8b3a3a;
+}
+
+/* ---------- Expense Header ---------- */
+.expenseHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.expenseTitle {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+}
+
+.expenseTodayTotal {
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+.expenseList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ---------- Close Out Month Panel ---------- */
+.closeOutBtnWrap {
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.closeOutBtn {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: opacity 0.2s;
+  width: 100%;
+}
+
+.closeOutBtn:hover {
+  opacity: 0.9;
+}
+
+.closeOutStatus {
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.allocPanel {
+  margin-bottom: 14px;
+  padding: 14px;
+  background: linear-gradient(135deg, #e8f5e9, #fff8e1);
+  border: 1px solid #c8e6c9;
+  border-radius: 12px;
+}
+
+.allocPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.allocPanelTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.allocPanelTitleIcon {
+  font-size: 18px;
+}
+
+.allocPanelTitleText {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-dark);
+}
+
+.allocCloseBtn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text-light);
+  padding: 0 4px;
+}
+
+.allocMessage {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.allocSectionLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.allocRows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.allocRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e0e4d4;
+}
+
+.allocRowIcon {
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.allocRowLabel {
+  flex: 1;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.allocRowCurrency {
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+.allocRowInput {
+  width: 75px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-family: inherit;
+  color: var(--accent-dark);
+  outline: none;
+}
+
+.allocUnallocated {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--accent-light);
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.allocUnallocatedLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.allocUnallocatedValue {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.allocConfirmBtn {
+  width: 100%;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: opacity 0.2s;
+}
+
+.allocConfirmBtn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.allocError {
+  margin-top: 8px;
+  padding: 10px;
+  background: #fff0f0;
+  border: 1px solid #e8c0c0;
+  border-radius: 8px;
+  font-size: 11px;
+  color: #8b3a3a;
+  line-height: 1.5;
+}
+
+/* ---------- Savings Goals ---------- */
+.goalsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.goalRow {
+  background: #f5f6f0;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.goalHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.goalNameInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  background: transparent;
+}
+
+.goalDeleteBtn {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.goalDeleteBtn:hover {
+  color: #8b3a3a;
+}
+
+.goalAmounts {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.goalAmountBlock {
+  flex: 1;
+}
+
+.goalAmountLabel {
+  font-size: 10px;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 3px;
+}
+
+.goalAmountLabelHint {
+  font-size: 8px;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--accent);
+}
+
+.goalAmountInputWrap {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.goalAmountCurrency {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.goalSavedInput {
+  width: 90px;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  color: var(--accent);
+  background: transparent;
+  cursor: default;
+}
+
+.goalTargetInput {
+  width: 90px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  color: var(--text);
+  background: transparent;
+}
+
+.goalOf {
+  font-size: 18px;
+  color: var(--border);
+}
+
+.goalPct {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 45px;
+  text-align: right;
+}
+
+.goalBarTrack {
+  width: 100%;
+  height: 8px;
+  background: var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.goalBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+  border-radius: 8px;
+  transition: width 0.4s ease;
+}
+
+/* ---------- Breakdown Cards (Savings / Investment) ---------- */
+.breakdownList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.breakdownRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.breakdownRow:nth-child(odd) {
+  background: #eaeed8;
+}
+
+.breakdownRow:nth-child(even) {
+  background: #f5f6f0;
+}
+
+.breakdownIcon {
+  font-size: 16px;
+}
+
+.breakdownLabel {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.breakdownCurrency {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.breakdownInput {
+  width: 90px;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  background: transparent;
+}
+
+.breakdownInputSavings {
+  color: var(--accent-dark);
+}
+
+.breakdownInputInvest {
+  color: var(--gold);
+}
+
+.breakdownSelect {
+  font-size: 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 4px;
+  font-family: inherit;
+  color: var(--text-light);
+  background: white;
+  max-width: 80px;
+  cursor: pointer;
+}
+
+/* ---------- Totals ---------- */
+.totalBox {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.totalBoxSavings {
+  background: var(--accent-light);
+}
+
+.totalBoxInvest {
+  background: var(--gold-light);
+}
+
+.totalLabel {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.totalLabelSavings {
+  color: var(--accent);
+}
+
+.totalLabelInvest {
+  color: var(--gold);
+}
+
+.totalValue {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.totalValueSavings {
+  color: var(--accent-dark);
+}
+
+.totalValueInvest {
+  color: var(--gold);
+}
+
+/* ---------- Net Worth ---------- */
+.netWorthBox {
+  margin-top: 12px;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--accent-light), var(--gold-light));
+  border-radius: 12px;
+  text-align: center;
+}
+
+.netWorthLabel {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.netWorthValue {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--accent-dark);
+}
+
+/* ---------- Finance Notes ---------- */
+.notesArea {
+  width: 100%;
+  min-height: 60px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text);
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.notesArea:focus {
+  border-color: var(--accent);
+}
+
+/* ---------- Breakdown description ---------- */
+.breakdownDesc {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-bottom: 12px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 700px) {
+  .fundsInput {
+    width: 80px;
+    font-size: 14px;
+  }
+
+  .summaryBoxValue,
+  .balanceValue {
+    font-size: 16px;
+  }
+
+  .breakdownRow {
+    padding: 8px 10px;
+  }
+
+  .breakdownInput {
+    width: 75px;
+    font-size: 13px;
+  }
+
+  .goalNameInput {
+    font-size: 13px;
+  }
+
+  .totalValue {
+    font-size: 18px;
+  }
+
+  .netWorthValue {
+    font-size: 20px;
+  }
+}

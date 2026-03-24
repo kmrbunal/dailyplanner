@@ -1,0 +1,240 @@
+/* ========== ROUTINE SECTION ========== */
+
+.routineSection {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.routineSectionTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
+}
+
+.routineSectionIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: var(--accent-light);
+}
+
+.routineHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.routineDescription {
+  font-size: 13px;
+  color: var(--text-light);
+  margin-bottom: 16px;
+}
+
+/* ========== ROUTINE GRID ========== */
+
+.routineGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+/* ========== ROUTINE COLUMN TITLES ========== */
+
+.routineColTitle {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--border);
+}
+
+.routineColTitle.work {
+  color: #3a4a2e;
+  border-color: #3a4a2e;
+}
+
+.routineColTitle.health {
+  color: #6b7c3f;
+  border-color: #6b7c3f;
+}
+
+.routineColTitle.personal {
+  color: #7a8c5a;
+  border-color: #7a8c5a;
+}
+
+/* ========== ROUTINE TASK ROW ========== */
+
+.routineTask {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #f5f6f0;
+  margin-bottom: 6px;
+  transition: background 0.15s;
+}
+
+.routineTask:hover {
+  background: #eaede2;
+}
+
+.routineTaskInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: transparent;
+}
+
+.routineTaskInput::placeholder {
+  color: #ccc;
+}
+
+.routineRemove {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0 4px;
+  transition: color 0.2s;
+}
+
+.routineRemove:hover {
+  color: #e66;
+}
+
+/* ========== ADD BUTTON ========== */
+
+.addBtn {
+  margin-top: 8px;
+  background: none;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  width: 100%;
+  cursor: pointer;
+  color: var(--text-light);
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.addBtn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-light);
+}
+
+/* ========== ROUTINE ACTIONS ========== */
+
+.routineActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.routineBtn {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.routineBtnSave {
+  composes: routineBtn;
+  background: white;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.routineBtnSave:hover {
+  background: var(--accent-light);
+}
+
+.routineBtnLoad {
+  composes: routineBtn;
+  background: var(--accent);
+  color: white;
+}
+
+.routineBtnLoad:hover {
+  background: var(--accent-dark);
+}
+
+/* ========== STATUS MESSAGE ========== */
+
+.routineStatus {
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 500;
+  margin-top: 8px;
+  text-align: center;
+  min-height: 18px;
+}
+
+/* ========== RESPONSIVE ========== */
+
+@media (max-width: 700px) {
+  .routineSection {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  .routineGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .routineSectionTitle {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+  }
+}
+
+@media (max-width: 400px) {
+  .routineSection {
+    padding: 14px;
+  }
+}
+
+@media print {
+  .routineActions {
+    display: none;
+  }
+
+  .routineRemove {
+    display: none;
+  }
+
+  .addBtn {
+    display: none;
+  }
+}

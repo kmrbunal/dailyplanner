@@ -1,0 +1,22 @@
+/* HealthTab layout — mirrors [data-carousel="health"] grid from original HTML */
+.healthGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+.mealSlide {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 700px) {
+  .healthGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mealSlide {
+    grid-column: unset;
+  }
+}

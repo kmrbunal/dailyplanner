@@ -1,0 +1,437 @@
+/* ========== TOP PRIORITY BOXES ========== */
+
+.topPriorityBox {
+  background: #dde4d4;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topPriorityBox.health {
+  background: #eaeed8;
+}
+
+.topPriorityBox.personal {
+  background: #e8eddf;
+}
+
+.topPriorityLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.topPriorityLabel.work {
+  color: #3a4a2e;
+}
+
+.topPriorityLabel.health {
+  color: #6b7c3f;
+}
+
+.topPriorityLabel.personal {
+  color: #7a8c5a;
+}
+
+.topPriorityInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  background: transparent;
+}
+
+.topPriorityInput.work {
+  color: #2f3d27;
+}
+
+.topPriorityInput.health {
+  color: #4a5c3e;
+}
+
+.topPriorityInput.personal {
+  color: #4a5c3e;
+}
+
+.topPriorityInput::placeholder {
+  color: #999;
+}
+
+/* ========== TASK CATEGORY CARDS ========== */
+
+.taskCat {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.taskCatTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.taskCatTitle.work {
+  color: #3a4a2e;
+}
+
+.taskCatTitle.health {
+  color: #6b7c3f;
+}
+
+.taskCatTitle.personal {
+  color: #7a8c5a;
+}
+
+.taskCatIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.taskCatIcon.work {
+  background: #dde4d4;
+}
+
+.taskCatIcon.health {
+  background: #eaeed8;
+}
+
+.taskCatIcon.personal {
+  background: #e8eddf;
+}
+
+/* ========== TODO LIST ========== */
+
+.todoList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ========== TODO ITEM ========== */
+
+.todoItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  position: relative;
+}
+
+.priorityCheck {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-radius: 5px;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.priorityCheck:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.priorityCheck:checked::after {
+  content: '\2713';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Category-specific checked colors */
+.priorityCheckWork:checked {
+  background: #3a4a2e;
+  border-color: #3a4a2e;
+}
+
+.priorityCheckHealth:checked {
+  background: #6b7c3f;
+  border-color: #6b7c3f;
+}
+
+.priorityCheckPersonal:checked {
+  background: #7a8c5a;
+  border-color: #7a8c5a;
+}
+
+.todoTextInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text);
+  background: transparent;
+}
+
+.todoTextInput::placeholder {
+  color: #ccc;
+}
+
+.todoTextInput.checked {
+  text-decoration: line-through;
+  color: var(--text-light);
+}
+
+/* ========== ALARM ========== */
+
+.alarmBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  opacity: 0.35;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.alarmBtn:hover {
+  opacity: 0.7;
+}
+
+.alarmBtn.set {
+  opacity: 1;
+}
+
+.alarmTime {
+  font-size: 10px;
+  color: var(--accent);
+  font-weight: 600;
+  min-width: 42px;
+  text-align: center;
+}
+
+.alarmPicker {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 50;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  display: none;
+}
+
+.alarmPicker.show {
+  display: block;
+}
+
+.alarmPickerTimeInput {
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  color: var(--text);
+}
+
+.alarmPickerBtn {
+  margin-top: 6px;
+  width: 100%;
+  padding: 6px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.alarmClearBtn {
+  margin-top: 4px;
+  width: 100%;
+  padding: 6px;
+  border: none;
+  border-radius: 8px;
+  background: #eee;
+  color: #888;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ========== ADD BUTTON ========== */
+
+.addBtn {
+  margin-top: 10px;
+  background: none;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  width: 100%;
+  cursor: pointer;
+  color: var(--text-light);
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.addBtn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-light);
+}
+
+/* ========== CAROUSEL LAYOUT ========== */
+
+.carouselTrack {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+.carouselNav {
+  display: none;
+}
+
+/* ========== RESPONSIVE ========== */
+
+@media (max-width: 700px) {
+  .carouselTrack {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 12px;
+    padding-bottom: 6px;
+  }
+
+  .carouselTrack::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carouselSlide {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    min-width: 0;
+  }
+
+  .carouselNav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 4px 0 10px;
+  }
+
+  .carouselNavBtn {
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--accent);
+    transition: all 0.2s;
+    flex-shrink: 0;
+    font-family: inherit;
+    padding: 0;
+  }
+
+  .carouselNavBtn:hover {
+    background: var(--accent);
+    color: white;
+  }
+
+  .carouselNavBtn:disabled {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .carouselDots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .carouselDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s;
+  }
+
+  .carouselDotActive {
+    background: var(--accent);
+    width: 20px;
+    border-radius: 4px;
+  }
+
+  .taskCat {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  .taskCatTitle {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+  }
+}
+
+@media (max-width: 400px) {
+  .taskCat {
+    padding: 14px;
+  }
+}
+
+@media print {
+  .addBtn {
+    display: none;
+  }
+
+  .alarmBtn {
+    display: none;
+  }
+
+  .alarmPicker {
+    display: none;
+  }
+
+  .carouselNav {
+    display: none;
+  }
+}

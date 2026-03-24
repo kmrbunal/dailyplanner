@@ -2,7 +2,7 @@ services:
   - type: web
     name: kimsdailyplanner
     runtime: node
-    buildCommand: npm install
+    buildCommand: cd client && npm install && npm run build && cd .. && npm install
     startCommand: node server.js
     envVars:
       - key: CLERK_PUBLISHABLE_KEY
@@ -10,4 +10,6 @@ services:
       - key: CLERK_SECRET_KEY
         sync: false
       - key: DATABASE_URL
+        sync: false
+      - key: VITE_CLERK_PUBLISHABLE_KEY
         sync: false

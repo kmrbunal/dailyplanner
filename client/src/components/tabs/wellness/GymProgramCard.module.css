@@ -1,0 +1,330 @@
+/* GymProgramCard — matches original gym program card styles */
+.card {
+  background: var(--card, #ffffff);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(30, 36, 24, 0.07);
+  border: 1px solid var(--border, #d4d8cd);
+  text-align: left;
+  min-height: 320px;
+}
+
+.cardTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: #dde6d4;
+}
+
+/* Weekly Focus Tracker */
+.weeklyFocus {
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  background: #f5f6f0;
+  border-radius: 12px;
+}
+
+.weeklyHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.weeklyTitle {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent, #4a5c3e);
+}
+
+.weekLabel {
+  font-size: 9px;
+  color: var(--text-light, #6b7360);
+}
+
+.weekGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.weekCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.weekDay {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-light, #6b7360);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.weekCol.isToday .weekDay {
+  color: var(--accent, #4a5c3e);
+  background: var(--accent-light, #dfe6d8);
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+
+.weekSelect {
+  width: 100%;
+  font-size: 9px;
+  font-family: inherit;
+  border: 1px solid var(--border, #d4d8cd);
+  border-radius: 6px;
+  background: white;
+  color: var(--text, #1e2418);
+  padding: 3px 1px;
+  cursor: pointer;
+  text-align: center;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.weekSelect:focus {
+  border-color: var(--accent, #4a5c3e);
+}
+
+.weekCol.isToday .weekSelect {
+  border-color: var(--accent, #4a5c3e);
+  background: #edf2e8;
+  font-weight: 600;
+}
+
+.weekCol.dayDone .weekDay {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.todaySuggestion {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--accent, #4a5c3e);
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Today's Focus buttons */
+.focusSection {
+  margin-bottom: 14px;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent, #4a5c3e);
+  margin-bottom: 8px;
+}
+
+.dayBtns {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.dayBtn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #b8c8a4;
+  background: white;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  color: #888;
+  transition: all 0.2s;
+}
+
+.dayBtn.active {
+  background: #5e7550;
+  color: white;
+  border-color: #5e7550;
+}
+
+/* Exercise section */
+.exerciseHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.exerciseDayLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: #5e7550;
+  background: #dfe6d8;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+.exerciseList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.exerciseRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  background: #f5f6f0;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.exerciseCheckbox {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.exerciseName {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text, #1e2418);
+  background: transparent;
+  min-width: 0;
+}
+
+.exerciseNameDone {
+  text-decoration: line-through;
+  color: var(--text-light, #6b7360);
+}
+
+.exerciseDetailCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.exerciseDetailLabel {
+  font-size: 9px;
+  color: var(--text-light, #6b7360);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.exerciseDetail {
+  width: 55px;
+  text-align: center;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 11px;
+  color: var(--text-light, #6b7360);
+  background: transparent;
+}
+
+.exercisePr {
+  color: var(--accent, #4a5c3e);
+  font-weight: 600;
+}
+
+.removeExerciseBtn {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0 4px;
+}
+
+.removeExerciseBtn:hover {
+  color: #c0392b;
+}
+
+/* Action buttons */
+.actionRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.addBtn {
+  flex: 1;
+  background: none;
+  border: 1px dashed var(--border, #d4d8cd);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--text-light, #6b7360);
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.addBtn:hover {
+  border-color: var(--accent, #4a5c3e);
+  color: var(--accent, #4a5c3e);
+  background: var(--accent-light, #dfe6d8);
+}
+
+.saveBtn {
+  flex: 1;
+  background: #dfe6d8;
+  color: #3d5a2e;
+  border: 1px dashed var(--border, #d4d8cd);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.saveBtn:hover {
+  background: #c8d8b8;
+}
+
+/* Notes */
+.notesArea {
+  width: 100%;
+  min-height: 40px;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--text, #1e2418);
+  resize: vertical;
+  line-height: 1.7;
+  background: repeating-linear-gradient(transparent, transparent 26px, var(--border, #d4d8cd) 26px, var(--border, #d4d8cd) 27px);
+  padding-top: 4px;
+}
+
+.notesArea::placeholder {
+  color: #ccc;
+}

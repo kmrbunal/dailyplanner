@@ -1,0 +1,80 @@
+/* Water Tracker — matches original .water-glass / .water-glasses styles */
+.card {
+  background: var(--card, #ffffff);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(30, 36, 24, 0.07);
+  border: 1px solid var(--border, #d4d8cd);
+  text-align: center;
+}
+
+.cardTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: #dde6d4;
+}
+
+.glasses {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.glass {
+  width: 32px;
+  height: 38px;
+  border: 2px solid #a3b58e;
+  border-radius: 4px 4px 8px 8px;
+  cursor: pointer;
+  background: white;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.glass.filled {
+  background: linear-gradient(to top, #6b7c3f 0%, #97ab72 100%);
+  border-color: #6b7c3f;
+}
+
+.glass:hover {
+  transform: scale(1.1);
+}
+
+.counter {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-light, #6b7360);
+}
+
+@media (max-width: 700px) {
+  .glass {
+    width: 28px;
+    height: 34px;
+  }
+}
+
+@media (max-width: 400px) {
+  .glass {
+    width: 24px;
+    height: 30px;
+  }
+}

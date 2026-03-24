@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const { clerkMiddleware } = require("@clerk/express");
 const db = require("./db");
@@ -15,8 +16,13 @@ app.use("/api", express.json());
 // API routes
 app.use("/api", apiRoutes);
 
-// Serve the static HTML file
-app.use(express.static("."));
+// Serve the built React app
+app.use(express.static(path.join(__dirname, "dist")));
+
+// SPA fallback — serve index.html for any non-API route
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
 
 // Start server after DB is ready
 db.initDB()

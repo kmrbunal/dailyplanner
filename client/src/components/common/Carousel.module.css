@@ -1,0 +1,180 @@
+/* ========== SWIPEABLE CARD CAROUSEL ========== */
+.cardCarousel {
+  position: relative;
+}
+
+.carouselTrack {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.carouselSlide {
+  display: contents;
+  /* On desktop, slides are transparent wrappers */
+}
+
+/* Tasks tab: 3-column layout on desktop */
+[data-carousel="tasks"] .carouselTrack {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* Finance cards span full width on desktop */
+[data-carousel="finance"] .carouselTrack {
+  grid-template-columns: 1fr;
+}
+
+/* Health: 3 columns for water/weight/cycle, full for meals */
+[data-carousel="health"] .carouselTrack {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* Wellness: 3 columns for mood/gratitude/gym */
+[data-carousel="wellness"] .carouselTrack {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* The 4th slide in Health (Meals) spans full width on desktop */
+[data-carousel="health"] .carouselSlide:nth-child(4) {
+  display: block;
+  grid-column: 1 / -1;
+}
+
+.carouselDots {
+  display: none;
+  /* Hidden on desktop */
+}
+
+.carouselNav {
+  display: none;
+  /* Hidden on desktop */
+}
+
+.carouselArrows {
+  display: none;
+  /* Hidden on desktop */
+}
+
+/* ========== RESPONSIVE ========== */
+
+@media (max-width: 700px) {
+  .cardCarousel {
+    overflow: hidden;
+    margin: 0 -4px;
+    padding: 0 4px;
+  }
+
+  .cardCarousel .carouselTrack {
+    display: flex !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 12px;
+    padding-bottom: 6px;
+  }
+
+  .cardCarousel .carouselTrack::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cardCarousel .carouselTrack > .carouselSlide {
+    display: block;
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    min-width: 0;
+  }
+
+  /* Ensure cards inside slides fill the width */
+  .carouselSlide > .wellnessCard,
+  .carouselSlide > .card,
+  .carouselSlide > .taskCat,
+  .carouselSlide > .valuableSection {
+    width: 100%;
+  }
+
+  .carouselNav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 4px 0 10px;
+  }
+
+  .carouselNavBtn {
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--accent);
+    transition: all 0.2s;
+    flex-shrink: 0;
+    font-family: inherit;
+    padding: 0;
+  }
+
+  .carouselNavBtn:hover {
+    background: var(--accent);
+    color: white;
+  }
+
+  .carouselNavBtn:disabled {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .carouselDots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .carouselDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s;
+  }
+
+  .carouselDot.active {
+    background: var(--accent);
+    width: 20px;
+    border-radius: 4px;
+  }
+
+  .carouselArrows {
+    display: none;
+  }
+
+  /* On mobile, carousel track is flex not grid */
+  .cardCarousel .carouselTrack {
+    grid-template-columns: unset;
+  }
+
+  /* Override grid inside carousel */
+  .cardCarousel .grid {
+    display: contents;
+  }
+
+  /* Wellness row inside carousel should not use grid */
+  .cardCarousel .wellnessRow {
+    display: contents;
+    grid-column: unset;
+  }
+
+  /* Health meal card: override nth-child display for mobile */
+  [data-carousel="health"] .carouselSlide:nth-child(4) {
+    display: block;
+  }
+}

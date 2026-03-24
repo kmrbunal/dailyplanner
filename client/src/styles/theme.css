@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Army Green Palette */
+  --bg: #f4f3ee;
+  --card: #ffffff;
+  --accent: #4a5c3e;
+  --accent-light: #dfe6d8;
+  --accent-dark: #2f3d27;
+  --accent-mid: #5e7550;
+  --text: #1e2418;
+  --text-light: #6b7360;
+  --border: #d4d8cd;
+  --rose: #7a8c5a;
+  --rose-light: #e8eddf;
+  --gold: #8b7d3c;
+  --gold-light: #f2efdb;
+  --olive: #6b7c3f;
+  --olive-light: #eaeed8;
+  --khaki: #8a7e5a;
+  --khaki-light: #f0eee0;
+  --shadow: 0 2px 12px rgba(30, 36, 24, 0.07);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.planner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes alarmPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15) rotate(8deg); }
+}
+
+/* ========== RESPONSIVE ========== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .planner {
+    max-width: 100%;
+  }
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  body {
+    padding: 12px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 400px) {
+  body {
+    padding: 8px;
+  }
+}
+
+/* Print */
+@media print {
+  body {
+    background: white;
+    padding: 12px;
+  }
+}
