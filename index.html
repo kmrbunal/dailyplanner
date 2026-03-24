@@ -1795,13 +1795,29 @@
       }
     }
   </style>
+  <script
+    data-clerk-publishable-key="pk_test_Y2FyZWZ1bC1ib2FyLTUxLmNsZXJrLmFjY291bnRzLmRldiQ"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+    crossorigin="anonymous"
+  ></script>
 </head>
 
 <body>
 
-  <div class="planner">
+  <!-- Auth screen (shown before sign-in) -->
+  <div id="auth-container" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);padding:24px;">
+    <h1 style="font-family:'Playfair Display',serif;font-size:28px;color:var(--accent-dark);margin-bottom:8px;font-style:italic;letter-spacing:2px;">Daily Planner</h1>
+    <p style="font-family:'DM Sans',sans-serif;color:var(--text-light);margin-bottom:24px;font-size:14px;">Sign in to sync your planner across devices</p>
+    <div id="clerk-sign-in"></div>
+  </div>
+
+  <div class="planner" id="planner" style="display:none">
     <!-- Header -->
     <div class="header">
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-bottom:8px;">
+        <span id="userName" style="font-size:12px;opacity:0.8;font-family:'DM Sans',sans-serif;"></span>
+        <button onclick="window.Clerk.signOut().then(()=>location.reload())" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:white;padding:4px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;">Sign Out</button>
+      </div>
       <div class="live-clock" id="liveClock"></div>
       <h1>Daily Planner</h1>
       <div class="date-nav">
@@ -1878,6 +1894,8 @@
           class="tab-label">Notes</span></button>
       <button class="tab-btn" onclick="switchTab('routines')" data-tab="routines"><span class="tab-icon">🔁</span><span
           class="tab-label">Routines</span></button>
+      <button class="tab-btn" onclick="switchTab('account')" data-tab="account"><span class="tab-icon">👤</span><span
+          class="tab-label">Account</span></button>
     </div>
 
     <div class="tab-content">
@@ -2505,6 +2523,59 @@
         </div><!-- /grid -->
       </div><!-- /tab-routines -->
 
+      <!-- TAB: Account -->
+      <div class="tab-panel" id="tab-account">
+        <div class="grid" style="max-width:600px;margin:0 auto;">
+          <div class="card" style="grid-column:span 2;">
+            <div class="card-title"><span class="icon" style="background:var(--accent-light);">👤</span> My Account</div>
+            <div style="display:flex;flex-direction:column;gap:16px;margin-top:12px;">
+              <div>
+                <label style="font-size:12px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">Email</label>
+                <input type="email" id="profileEmail" disabled style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;background:#f0f0ee;color:var(--text-light);">
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">Display Name</label>
+                <input type="text" id="profileName" placeholder="Your name" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;color:var(--text);">
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">Timezone</label>
+                <select id="profileTimezone" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;color:var(--text);background:white;">
+                  <option value="">Auto-detect</option>
+                  <option value="Asia/Manila">Asia/Manila (PHT)</option>
+                  <option value="Asia/Singapore">Asia/Singapore (SGT)</option>
+                  <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
+                  <option value="America/New_York">America/New_York (EST)</option>
+                  <option value="America/Los_Angeles">America/Los_Angeles (PST)</option>
+                  <option value="Europe/London">Europe/London (GMT)</option>
+                  <option value="Australia/Sydney">Australia/Sydney (AEST)</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">Currency</label>
+                <select id="profileCurrency" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;color:var(--text);background:white;">
+                  <option value="PHP">PHP - Philippine Peso</option>
+                  <option value="USD">USD - US Dollar</option>
+                  <option value="EUR">EUR - Euro</option>
+                  <option value="GBP">GBP - British Pound</option>
+                  <option value="JPY">JPY - Japanese Yen</option>
+                  <option value="SGD">SGD - Singapore Dollar</option>
+                  <option value="AUD">AUD - Australian Dollar</option>
+                </select>
+              </div>
+              <button onclick="saveProfile()" style="background:var(--accent);color:white;border:none;padding:12px;border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;">Save Profile</button>
+              <div id="profileStatus" style="font-size:12px;color:var(--accent);text-align:center;min-height:18px;"></div>
+            </div>
+          </div>
+
+          <div class="card" style="grid-column:span 2;">
+            <div class="card-title"><span class="icon" style="background:var(--accent-light);">📊</span> Data Summary</div>
+            <div id="dataSummary" style="font-size:13px;color:var(--text-light);line-height:1.8;margin-top:8px;">
+              Loading...
+            </div>
+          </div>
+        </div>
+      </div><!-- /tab-account -->
+
       <!-- TAB: Inspiration -->
       <div class="tab-panel" id="tab-inspire">
         <div class="grid">
@@ -2956,6 +3027,182 @@
   </div>
 
   <script>
+    // ========== AUTH & API LAYER ==========
+    let clerkUser = null;
+
+    async function getAuthToken() {
+      if (!window.Clerk || !window.Clerk.session) return null;
+      return await window.Clerk.session.getToken();
+    }
+
+    // Generic API helpers (used by save/load functions)
+    async function apiGet(path) {
+      const token = await getAuthToken();
+      if (!token) return null;
+      const res = await fetch('/api/' + path, {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    }
+
+    async function apiPut(path, body) {
+      const token = await getAuthToken();
+      if (!token) return false;
+      const res = await fetch('/api/' + path, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify(body)
+      });
+      return res.ok;
+    }
+
+    // Store helpers (for routines, learning, achievements, etc.)
+    async function apiLoadStore(storeKey) {
+      const json = await apiGet('store/' + storeKey);
+      return json ? json.data : null;
+    }
+
+    async function apiSaveStore(storeKey, data) {
+      return apiPut('store/' + storeKey, data);
+    }
+
+    // Initialize Clerk auth
+    async function initAuth() {
+      const clerk = window.Clerk;
+      if (!clerk) { console.error('Clerk failed to load'); return; }
+      await clerk.load();
+
+      if (clerk.user) {
+        onSignedIn(clerk.user);
+      } else {
+        clerk.mountSignIn(document.getElementById('clerk-sign-in'));
+        clerk.addListener(({ user }) => {
+          if (user) {
+            clerk.unmountSignIn(document.getElementById('clerk-sign-in'));
+            onSignedIn(user);
+          }
+        });
+      }
+    }
+
+    async function onSignedIn(user) {
+      clerkUser = user;
+      document.getElementById('auth-container').style.display = 'none';
+      document.getElementById('planner').style.display = 'block';
+      const email = user.emailAddresses?.[0]?.emailAddress || '';
+      document.getElementById('userName').textContent = user.firstName || email;
+
+      // Init profile in DB (creates if first time)
+      try {
+        const token = await getAuthToken();
+        await fetch('/api/profile/init', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ email })
+        });
+      } catch (e) { console.error('Profile init failed', e); }
+
+      // Load profile into account tab
+      loadProfile();
+
+      // Migrate localStorage data to cloud on first sign-in
+      await migrateLocalToCloud();
+
+      // Load today's data (now from API)
+      await loadDayData();
+      loadMonthlyFinance();
+      renderWeightProgress();
+    }
+
+    // Profile functions
+    async function loadProfile() {
+      try {
+        const profile = await apiGet('profile');
+        if (profile) {
+          document.getElementById('profileEmail').value = profile.email || '';
+          document.getElementById('profileName').value = profile.display_name || '';
+          if (profile.timezone) document.getElementById('profileTimezone').value = profile.timezone;
+          if (profile.currency) document.getElementById('profileCurrency').value = profile.currency;
+        }
+        // Update data summary
+        const dates = await apiGet('days');
+        document.getElementById('dataSummary').innerHTML =
+          'Days recorded: <strong>' + (dates ? dates.length : 0) + '</strong><br>' +
+          'Account email: <strong>' + (profile?.email || '') + '</strong><br>' +
+          'Synced to cloud: <strong>Yes</strong>';
+      } catch (e) { console.error('Load profile failed', e); }
+    }
+
+    async function saveProfile() {
+      try {
+        await apiPut('profile', {
+          display_name: document.getElementById('profileName').value,
+          timezone: document.getElementById('profileTimezone').value,
+          currency: document.getElementById('profileCurrency').value
+        });
+        document.getElementById('profileStatus').textContent = 'Profile saved!';
+        setTimeout(() => document.getElementById('profileStatus').textContent = '', 3000);
+      } catch (e) {
+        document.getElementById('profileStatus').textContent = 'Failed to save';
+      }
+    }
+
+    // Migrate existing localStorage data to cloud on first sign-in
+    async function migrateLocalToCloud() {
+      if (!clerkUser) return;
+      try {
+        // Check if cloud already has data
+        const cloudDates = await apiGet('days');
+        if (cloudDates && cloudDates.length > 0) return; // Already has cloud data
+
+        // Migrate day data
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith(STORAGE_PREFIX) && key.match(/\d{4}-\d{2}-\d{2}$/)) {
+            const dateKey = key.replace(STORAGE_PREFIX, '');
+            try {
+              const data = JSON.parse(localStorage.getItem(key));
+              await apiPut('days/' + dateKey, data);
+            } catch (e) { }
+          }
+        }
+
+        // Migrate store keys
+        const storeMap = {
+          'dailyPlanner_routines': 'routines',
+          'dailyPlanner_learning_active': 'learning_active',
+          'dailyPlanner_achievements': 'achievements',
+          'dailyPlanner_weight_history': 'weight_history',
+          'dailyPlanner_gym_routines': 'gym_routines',
+          'dailyPlanner_gym_weekly': 'gym_weekly',
+          'dailyPlanner_closedMonths': 'closedMonths'
+        };
+        for (const [lsKey, storeKey] of Object.entries(storeMap)) {
+          const raw = localStorage.getItem(lsKey);
+          if (raw) {
+            try { await apiSaveStore(storeKey, JSON.parse(raw)); } catch (e) { }
+          }
+        }
+
+        // Migrate monthly finance keys
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith('dailyPlanner_monthlyFinance_')) {
+            const suffix = key.replace('dailyPlanner_monthlyFinance_', '');
+            try { await apiSaveStore('monthlyFinance_' + suffix, JSON.parse(localStorage.getItem(key))); } catch (e) { }
+          }
+        }
+
+        showToast('Data migrated to cloud!', 'loaded');
+      } catch (err) {
+        console.error('Migration failed', err);
+      }
+    }
+
+    // Start auth when page loads
+    window.addEventListener('load', initAuth);
+
     // Tab switching
     // Tab color themes: cool for deep work, warm for planning/creative
     const tabThemes = {
@@ -2967,6 +3214,7 @@
       finance: { gradient: 'linear-gradient(135deg, #7a6b3c, #5c4f2a, #3d341c)', accent: '#7a6b3c', accentLight: '#efe8d4', accentDark: '#3d341c' },
       notes: { gradient: 'linear-gradient(135deg, #8b6b3e, #6b4f2e, #4a3520)', accent: '#8b6b3e', accentLight: '#f0e5d5', accentDark: '#4a3520' },
       inspire: { gradient: 'linear-gradient(135deg, #8b5e4a, #6b4235, #4a2c22)', accent: '#8b5e4a', accentLight: '#f0e0d6', accentDark: '#4a2c22' },
+      account: { gradient: 'linear-gradient(135deg, #5a6b5e, #3e4f42, #2a382e)', accent: '#5a6b5e', accentLight: '#dde6df', accentDark: '#2a382e' },
     };
 
     function switchTab(tabName) {
@@ -3337,7 +3585,7 @@
     }
 
     // Save current day to localStorage
-    function saveDayData() {
+    async function saveDayData() {
       const key = STORAGE_PREFIX + getDateKey();
       const data = collectDayData();
       // Only save if there's actual content
@@ -3358,8 +3606,20 @@
         data.financeNotes;
 
       if (hasContent) {
+        // Always save to localStorage (instant)
         localStorage.setItem(key, JSON.stringify(data));
-        showToast('💾 Saved — ' + getDateKey(), '');
+        // Also save to cloud if signed in
+        if (clerkUser) {
+          try {
+            await apiPut('days/' + getDateKey(), data);
+            showToast('💾 Synced — ' + getDateKey(), '');
+          } catch (err) {
+            console.error('Cloud save failed', err);
+            showToast('💾 Saved locally', '');
+          }
+        } else {
+          showToast('💾 Saved — ' + getDateKey(), '');
+        }
       }
 
       // Always update the master learning list with non-completed items
@@ -3368,26 +3628,42 @@
       saveCompletedAchievements();
     }
 
-    // Load a day's data from localStorage
-    function loadDayData(dateKey) {
-      const key = STORAGE_PREFIX + (dateKey || getDateKey());
-      const raw = localStorage.getItem(key);
-      if (raw) {
+    // Load a day's data — tries API first, falls back to localStorage
+    async function loadDayData(dateKey) {
+      const dk = dateKey || getDateKey();
+      const lsKey = STORAGE_PREFIX + dk;
+      let data = null;
+
+      // Try cloud first if signed in
+      if (clerkUser) {
         try {
-          const data = JSON.parse(raw);
-          restoreDayData(data);
-          showToast('📂 Loaded — ' + (dateKey || getDateKey()), 'loaded');
-          // If this day had no learning data, carry forward incomplete items
-          if (!data.learning || data.learning.length === 0) {
-            loadLearningMaster();
+          const json = await apiGet('days/' + dk);
+          if (json && json.data) {
+            data = json.data;
+            // Update localStorage cache
+            localStorage.setItem(lsKey, JSON.stringify(data));
           }
-          return true;
-        } catch (e) { console.error('Failed to parse saved data', e); }
+        } catch (err) { console.error('Cloud load failed, using localStorage', err); }
+      }
+
+      // Fall back to localStorage
+      if (!data) {
+        const raw = localStorage.getItem(lsKey);
+        if (raw) {
+          try { data = JSON.parse(raw); } catch (e) { }
+        }
+      }
+
+      if (data) {
+        restoreDayData(data);
+        showToast('📂 Loaded — ' + dk, 'loaded');
+        if (!data.learning || data.learning.length === 0) {
+          loadLearningMaster();
+        }
+        return true;
       } else {
-        // No saved data for this day — still carry forward learning items
         loadLearningMaster();
       }
-      // Always render achievements and sync learning to personal tasks
       renderAchievements();
       syncLearningToPersonalTasks();
       return false;
@@ -3397,7 +3673,7 @@
     let _saveTimer = null;
     function scheduleSave() {
       clearTimeout(_saveTimer);
-      _saveTimer = setTimeout(saveDayData, 1500); // Save 1.5s after last change
+      _saveTimer = setTimeout(() => { saveDayData().catch(console.error); }, 1500);
     }
 
     // Get all saved date keys
@@ -3414,21 +3690,21 @@
 
     // Switch date with save/load
     function switchDate(newDate) {
-      // Save current day first
-      saveDayData();
-      // Update current date
+      // Save current day in background (don't block UI)
+      saveDayData().catch(console.error);
+      // Update current date immediately
       currentDate = newDate;
       document.getElementById('dateDisplay').textContent = formatDate(currentDate);
       // Clear and load
       clearUI();
-      loadDayData();
+      loadDayData().catch(console.error);
       // Refresh weekly focus for the new date context
       if (typeof loadGymWeeklyFocus === 'function') loadGymWeeklyFocus();
     }
 
     // Export current day as JSON file download
-    function exportDayJSON() {
-      saveDayData();
+    async function exportDayJSON() {
+      await saveDayData();
       const data = collectDayData();
       data._date = getDateKey();
       data._exported = new Date().toISOString();
@@ -3452,6 +3728,7 @@
           if (data._date) {
             // Save to the correct date key
             localStorage.setItem(STORAGE_PREFIX + data._date, JSON.stringify(data));
+            if (clerkUser) apiPut('days/' + data._date, data).catch(console.error);
             // If it's for today's date, also restore UI
             if (data._date === getDateKey()) {
               restoreDayData(data);
@@ -3460,7 +3737,7 @@
           } else {
             // No date key, apply to current day
             restoreDayData(data);
-            saveDayData();
+            saveDayData().catch(console.error);
             showToast('📂 Imported to today', 'loaded');
           }
         } catch (err) {
@@ -3472,8 +3749,8 @@
     }
 
     // Export ALL saved days as a single JSON file
-    function exportAllDays() {
-      saveDayData();
+    async function exportAllDays() {
+      await saveDayData();
       const allData = {};
       const dates = getSavedDates();
       dates.forEach(dateKey => {
@@ -3545,8 +3822,7 @@
 
     document.getElementById('dateDisplay').textContent = formatDate(currentDate);
 
-    // Load today's saved data on startup
-    loadDayData();
+    // Data loading is handled by initAuth() -> onSignedIn()
 
     // ========== LIVE CLOCK ==========
     function updateClock() {
@@ -3779,25 +4055,31 @@
       })).filter(l => l.text && l.status !== 'done');
 
       localStorage.setItem(LEARNING_MASTER_KEY, JSON.stringify(items));
+      if (clerkUser) apiSaveStore('learning_active', items).catch(console.error);
     }
 
     // Load master learning list (non-completed items) into the UI
-    function loadLearningMaster() {
-      const raw = localStorage.getItem(LEARNING_MASTER_KEY);
-      if (!raw) return;
-      try {
-        const items = JSON.parse(raw);
-        if (!items || items.length === 0) return;
-        const list = document.getElementById('learningList');
-        list.innerHTML = '';
-        items.forEach(l => {
-          const item = document.createElement('div');
-          item.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:10px;border:1px solid #c8d2be;';
-          item.innerHTML = '<span style="font-size:18px;">' + (l.emoji || '📖') + '</span><input type="text" value="' + (l.text || '').replace(/"/g, '&quot;') + '" placeholder="Course or activity..." style="flex:1;border:none;outline:none;font-family:inherit;font-size:13px;color:var(--text);background:transparent;" oninput="scheduleSave()"><select onchange="onLearningStatusChange(); scheduleSave();" style="border:none;outline:none;font-family:inherit;font-size:11px;color:var(--text-light);background:transparent;cursor:pointer;"><option value="explore">Exploring</option><option value="enrolled">Enrolled</option><option value="progress">In Progress</option><option value="done">Completed</option></select>';
-          if (l.status) item.querySelector('select').value = l.status;
-          list.appendChild(item);
-        });
-      } catch (e) { }
+    async function loadLearningMaster() {
+      let items = null;
+      // Try cloud first
+      if (clerkUser) {
+        try { items = await apiLoadStore('learning_active'); } catch (e) { }
+      }
+      // Fall back to localStorage
+      if (!items) {
+        const raw = localStorage.getItem(LEARNING_MASTER_KEY);
+        if (raw) try { items = JSON.parse(raw); } catch (e) { }
+      }
+      if (!items || items.length === 0) return;
+      const list = document.getElementById('learningList');
+      list.innerHTML = '';
+      items.forEach(l => {
+        const item = document.createElement('div');
+        item.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:10px;border:1px solid #c8d2be;';
+        item.innerHTML = '<span style="font-size:18px;">' + (l.emoji || '📖') + '</span><input type="text" value="' + (l.text || '').replace(/"/g, '&quot;') + '" placeholder="Course or activity..." style="flex:1;border:none;outline:none;font-family:inherit;font-size:13px;color:var(--text);background:transparent;" oninput="scheduleSave()"><select onchange="onLearningStatusChange(); scheduleSave();" style="border:none;outline:none;font-family:inherit;font-size:11px;color:var(--text-light);background:transparent;cursor:pointer;"><option value="explore">Exploring</option><option value="enrolled">Enrolled</option><option value="progress">In Progress</option><option value="done">Completed</option></select>';
+        if (l.status) item.querySelector('select').value = l.status;
+        list.appendChild(item);
+      });
     }
 
     // ========== COMPLETED ACHIEVEMENTS TRACKER ==========
@@ -3834,16 +4116,24 @@
       });
 
       localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify(achievements));
+      if (clerkUser) apiSaveStore('achievements', achievements).catch(console.error);
       renderAchievements();
     }
 
-    function renderAchievements() {
+    async function renderAchievements() {
       const container = document.getElementById('achievementsList');
       let achievements = [];
-      try {
-        const raw = localStorage.getItem(ACHIEVEMENTS_KEY);
-        if (raw) achievements = JSON.parse(raw);
-      } catch (e) { }
+      // Try cloud first
+      if (clerkUser) {
+        try { const cloud = await apiLoadStore('achievements'); if (cloud) achievements = cloud; } catch (e) { }
+      }
+      // Fall back to localStorage
+      if (achievements.length === 0) {
+        try {
+          const raw = localStorage.getItem(ACHIEVEMENTS_KEY);
+          if (raw) achievements = JSON.parse(raw);
+        } catch (e) { }
+      }
 
       if (achievements.length === 0) {
         container.innerHTML = '<div style="font-size:13px;color:var(--text-light);font-style:italic;padding:12px;text-align:center;">No completed items yet. Mark a course as "Completed" to see it here!</div>';
@@ -3947,15 +4237,24 @@
         health: getRoutineTexts('routineHealth'),
         personal: getRoutineTexts('routinePersonal')
       };
-      // Save to a JS variable (persists during session)
-      window._savedRoutines = routines;
+      localStorage.setItem('dailyPlanner_routines', JSON.stringify(routines));
+      if (clerkUser) apiSaveStore('routines', routines).catch(console.error);
       const status = document.getElementById('routineStatus');
       status.textContent = 'Routines saved! (' + (routines.work.length + routines.health.length + routines.personal.length) + ' tasks total)';
       setTimeout(() => status.textContent = '', 3000);
     }
 
-    function loadRoutines() {
-      const routines = window._savedRoutines;
+    async function loadRoutines() {
+      let routines = null;
+      // Try cloud first
+      if (clerkUser) {
+        try { routines = await apiLoadStore('routines'); } catch (e) { }
+      }
+      // Fall back to localStorage
+      if (!routines) {
+        const raw = localStorage.getItem('dailyPlanner_routines');
+        if (raw) try { routines = JSON.parse(raw); } catch (e) { }
+      }
       if (!routines || (routines.work.length + routines.health.length + routines.personal.length === 0)) {
         // Fall back to reading current routine inputs
         const r = {
@@ -3968,7 +4267,8 @@
           setTimeout(() => document.getElementById('routineStatus').textContent = '', 3000);
           return;
         }
-        window._savedRoutines = r;
+        localStorage.setItem('dailyPlanner_routines', JSON.stringify(r));
+        if (clerkUser) apiSaveStore('routines', r).catch(console.error);
         loadIntoTodos(r);
       } else {
         loadIntoTodos(routines);
@@ -4173,6 +4473,7 @@
       const history = getWeightHistory();
       history[getDateKey()] = { weight: w, unit: unit };
       localStorage.setItem(WEIGHT_HISTORY_KEY, JSON.stringify(history));
+      if (clerkUser) apiSaveStore('weight_history', history).catch(console.error);
       renderWeightProgress();
     }
 
@@ -4181,6 +4482,7 @@
       if (!history[dateKey]) return;
       delete history[dateKey];
       localStorage.setItem(WEIGHT_HISTORY_KEY, JSON.stringify(history));
+      if (clerkUser) apiSaveStore('weight_history', history).catch(console.error);
       // If deleting today's entry, also clear the input
       if (dateKey === getDateKey()) {
         document.getElementById('weightInput').value = '';
@@ -4335,6 +4637,7 @@
       const routines = getGymRoutines();
       routines[dayType] = exercises.map(e => ({ name: e.name, sets: e.sets, reps: e.reps, pr: e.pr }));
       localStorage.setItem(GYM_ROUTINE_KEY, JSON.stringify(routines));
+      if (clerkUser) apiSaveStore('gym_routines', routines).catch(console.error);
       // Also update the cache so it reflects the save
       gymDayExercisesCache[dayType] = exercises;
       showToast('✅ Routine saved for ' + (gymDayLabels[dayType] || dayType), '');
@@ -4493,6 +4796,7 @@
         const weekId = getWeekMonday(currentDate);
         all[weekId] = data;
         localStorage.setItem(GYM_WEEK_KEY, JSON.stringify(all));
+        if (clerkUser) apiSaveStore('gym_weekly', all).catch(console.error);
       } catch (e) { }
     }
 
@@ -4696,6 +5000,7 @@
         data.investAllocations[sel.dataset.type] = sel.value;
       });
       localStorage.setItem(key, JSON.stringify(data));
+      if (clerkUser) apiSaveStore('monthlyFinance_' + getMonthKey(getDateKey()), data).catch(console.error);
     }
 
     function loadMonthlyFinance() {
@@ -4864,7 +5169,7 @@
     }
     function markMonthClosed(monthKey) {
       const closed = getClosedMonths();
-      if (!closed.includes(monthKey)) { closed.push(monthKey); localStorage.setItem(CLOSED_MONTHS_KEY, JSON.stringify(closed)); }
+      if (!closed.includes(monthKey)) { closed.push(monthKey); localStorage.setItem(CLOSED_MONTHS_KEY, JSON.stringify(closed)); if (clerkUser) apiSaveStore('closedMonths', closed).catch(console.error); }
     }
 
     // All savings + investment category labels for allocation dropdowns
@@ -5190,11 +5495,11 @@
       if (e.target === this) hideClearConfirm();
     });
 
-    function clearAllAndStartNew() {
+    async function clearAllAndStartNew() {
       hideClearConfirm();
 
       // Save current day before clearing
-      saveDayData();
+      await saveDayData();
 
       // Reset date to today
       currentDate = new Date();
@@ -5296,7 +5601,7 @@
 
     // ========== SWIPE TO SWITCH TABS (MOBILE) ==========
     (function () {
-      const tabOrder = ['tasks', 'health', 'wellness', 'finance', 'inspire', 'learn', 'notes', 'routines'];
+      const tabOrder = ['tasks', 'health', 'wellness', 'finance', 'inspire', 'learn', 'notes', 'routines', 'account'];
       let touchStartX = 0, touchStartY = 0, swiping = false;
       const container = document.querySelector('.tab-content');
 

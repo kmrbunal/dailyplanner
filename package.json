@@ -1,0 +1,14 @@
+{
+  "name": "dailyplanner",
+  "version": "1.0.0",
+  "description": "Daily Planner with Clerk auth and NeonDB storage",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@clerk/express": "^1.0.0",
+    "@neondatabase/serverless": "^0.10.0",
+    "express": "^4.21.0"
+  }
+}

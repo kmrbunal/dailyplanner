@@ -1,6 +1,13 @@
 services:
   - type: web
-    name: daily-planner
-    runtime: static
-    buildCommand: ""
-    staticPublishPath: .
+    name: kimsdailyplanner
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: CLERK_PUBLISHABLE_KEY
+        sync: false
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
