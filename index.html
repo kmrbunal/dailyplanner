@@ -2905,7 +2905,7 @@
                     <div id="allocateRows" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;"></div>
                     <div
                       style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--accent-light);border-radius:8px;margin-bottom:10px;">
-                      <span style="font-size:11px;font-weight:600;color:var(--accent);">Unallocated</span>
+                      <span style="font-size:11px;font-weight:600;color:var(--accent);">Remaining to Allocate</span>
                       <span style="font-size:13px;font-weight:700;color:var(--accent-dark);"
                         id="allocateUnallocated">₱0.00</span>
                     </div>
@@ -2914,6 +2914,25 @@
                       & Close Out Month</button>
                     <div id="allocateError"
                       style="display:none;margin-top:8px;padding:10px;background:#fff0f0;border:1px solid #e8c0c0;border-radius:8px;font-size:11px;color:#8b3a3a;line-height:1.5;">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Day Snapshot (shown when viewing past days) -->
+                <div id="dayFinanceSnapshot" style="display:none;background:linear-gradient(135deg,#e8eddf,#dce5d0);border-radius:14px;padding:14px 16px;margin-bottom:14px;border:1px solid #c0d0a8;">
+                  <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:#4a5c3e;margin-bottom:10px;">Day Snapshot</div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;">
+                    <div>
+                      <div style="font-size:9px;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;">Available</div>
+                      <div style="font-size:15px;font-weight:700;color:var(--accent-dark);" id="snapshotAvailable">—</div>
+                    </div>
+                    <div>
+                      <div style="font-size:9px;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;">Spent</div>
+                      <div style="font-size:15px;font-weight:700;color:#6b7c3f;" id="snapshotSpent">—</div>
+                    </div>
+                    <div>
+                      <div style="font-size:9px;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;">Remaining</div>
+                      <div style="font-size:15px;font-weight:700;" id="snapshotRemaining">—</div>
                     </div>
                   </div>
                 </div>
@@ -3513,12 +3532,26 @@
       });
       data.mealNotes = document.getElementById('mealNotes').value;
 
-      // Finance — only expenses are per-day; savings/investments/funds are monthly
+      // Finance — expenses are per-day; savings/investments/funds are monthly
       data.expenses = Array.from(document.getElementById('expenseList').children).map(row => ({
         category: row.querySelector('select') ? row.querySelector('select').value : '',
         amount: row.querySelector('input[type="number"]') ? row.querySelector('input[type="number"]').value : ''
       }));
       data.financeNotes = document.getElementById('financeNotes').value;
+
+      // Snapshot daily finance summary so past days show accurate numbers
+      const todayExp = data.expenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
+      const cash = parseFloat(document.getElementById('cashOnHand').value) || 0;
+      const digital = parseFloat(document.getElementById('digitalWallet').value) || 0;
+      const monthBudget = cash + digital;
+      const prevDaysExp = getMonthlyExpenseTotal();
+      data.dailyFinanceSummary = {
+        monthBudget: monthBudget,
+        prevDaysSpent: prevDaysExp,
+        availableAtStart: monthBudget - prevDaysExp,
+        todaySpent: todayExp,
+        remainingAfterToday: monthBudget - prevDaysExp - todayExp
+      };
 
       return data;
     }
@@ -3696,6 +3729,22 @@
         if (data.expenses.length === 0) { addExpense(); addExpense(); addExpense(); }
       }
       if (data.financeNotes !== undefined) document.getElementById('financeNotes').value = data.financeNotes || '';
+
+      // Show day snapshot if viewing a past day that has one
+      const snapshotEl = document.getElementById('dayFinanceSnapshot');
+      if (data.dailyFinanceSummary && snapshotEl) {
+        const s = data.dailyFinanceSummary;
+        document.getElementById('snapshotAvailable').textContent = '₱' + (s.availableAtStart || 0).toFixed(2);
+        document.getElementById('snapshotSpent').textContent = '₱' + (s.todaySpent || 0).toFixed(2);
+        const rem = s.remainingAfterToday || 0;
+        const remEl = document.getElementById('snapshotRemaining');
+        remEl.textContent = '₱' + Math.abs(rem).toFixed(2);
+        remEl.style.color = rem < 0 ? '#8b3a3a' : 'var(--accent-dark)';
+        snapshotEl.style.display = 'block';
+      } else if (snapshotEl) {
+        snapshotEl.style.display = 'none';
+      }
+
       recalcFinance();
       recalcSavingsBreakdown();
       recalcInvestments();
@@ -3749,6 +3798,8 @@
       document.getElementById('expenseList').innerHTML = '';
       addExpense(); addExpense(); addExpense();
       document.getElementById('financeNotes').value = '';
+      const snapshotEl = document.getElementById('dayFinanceSnapshot');
+      if (snapshotEl) snapshotEl.style.display = 'none';
       loadMonthlyFinance();
       recalcFinance();
       recalcSavingsBreakdown();
@@ -5555,7 +5606,7 @@
           '<span style="font-size:13px;flex-shrink:0;">' + cat.label.split(' ')[0] + '</span>' +
           '<span style="flex:1;font-size:11px;font-weight:600;color:var(--text);">' + cat.label.split(' ').slice(1).join(' ') + '</span>' +
           '<span style="font-size:11px;color:var(--text-light);">₱</span>' +
-          '<input type="number" class="allocate-input" data-type="' + cat.type + '" data-group="' + cat.group + '" placeholder="0" step="0.01" ' +
+          '<input type="number" class="allocate-input" data-type="' + cat.type + '" data-group="' + cat.group + '" placeholder="0" min="0" step="0.01" ' +
           'style="width:75px;text-align:right;font-size:13px;font-weight:600;border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-family:inherit;color:var(--accent-dark);outline:none;" ' +
           'oninput="recalcAllocateUnallocated()">';
         container.appendChild(row);
@@ -5571,8 +5622,24 @@
       const unalloc = monthEndRemaining - totalAlloc;
       const el = document.getElementById('allocateUnallocated');
       if (el) {
-        el.textContent = '₱' + Math.max(0, unalloc).toFixed(2);
-        el.style.color = unalloc < -0.01 ? '#8b3a3a' : 'var(--accent-dark)';
+        if (unalloc < -0.01) {
+          el.textContent = '-₱' + Math.abs(unalloc).toFixed(2);
+          el.style.color = '#8b3a3a';
+        } else {
+          el.textContent = '₱' + unalloc.toFixed(2);
+          el.style.color = 'var(--accent-dark)';
+        }
+      }
+      // Update the confirm button state
+      const btn = document.getElementById('allocateRemainingBtn');
+      if (btn) {
+        if (unalloc < -0.01) {
+          btn.style.opacity = '0.5';
+          btn.style.pointerEvents = 'none';
+        } else {
+          btn.style.opacity = '1';
+          btn.style.pointerEvents = 'auto';
+        }
       }
     }
 
@@ -5581,11 +5648,22 @@
       const allocError = document.getElementById('allocateError');
       if (allocError) allocError.style.display = 'none';
 
-      // Sum allocations
+      // Sum allocations (reject negative values)
       let totalAlloc = 0;
+      let hasNegative = false;
       document.querySelectorAll('.allocate-input').forEach(inp => {
-        totalAlloc += parseFloat(inp.value) || 0;
+        const val = parseFloat(inp.value) || 0;
+        if (val < 0) hasNegative = true;
+        totalAlloc += val;
       });
+
+      if (hasNegative) {
+        if (allocError) {
+          allocError.style.display = 'block';
+          allocError.innerHTML = '<strong>Invalid amount!</strong> Allocation values cannot be negative.';
+        }
+        return;
+      }
 
       // Validate: total allocated must not exceed remaining
       if (totalAlloc > monthEndRemaining + 0.01) {
