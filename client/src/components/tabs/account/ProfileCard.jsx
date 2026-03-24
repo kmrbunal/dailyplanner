@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuthContext } from '../../../context/AuthContext';
 import styles from './AccountTab.module.css';
 
@@ -24,26 +24,33 @@ const CURRENCY_OPTIONS = [
 ];
 
 export default function ProfileCard() {
-  const { profile, saveProfile } = useAuthContext();
+  const { user, profile, profileLoaded, saveProfile } = useAuthContext();
 
-  const [displayName, setDisplayName] = useState(profile.display_name || '');
-  const [timezone, setTimezone] = useState(profile.timezone || '');
-  const [currency, setCurrency] = useState(profile.currency || 'PHP');
+  // Pre-fill from Clerk user data, then override with DB profile when it loads
+  const clerkEmail = user?.emailAddresses?.[0]?.emailAddress || user?.primaryEmailAddress?.emailAddress || '';
+  const clerkName = user?.firstName ? `${user.firstName}${user.lastName ? ' ' + user.lastName : ''}` : '';
+
+  const [displayName, setDisplayName] = useState(clerkName);
+  const [timezone, setTimezone] = useState('');
+  const [currency, setCurrency] = useState('PHP');
+  const [email, setEmail] = useState(clerkEmail);
   const [status, setStatus] = useState('');
   const [saving, setSaving] = useState(false);
 
-  // Sync local state when profile loads from API
-  // (profile may arrive asynchronously after first render)
-  const lastSyncedRef = useState({ synced: false })[0];
-  if (!lastSyncedRef.synced && profile.email) {
-    lastSyncedRef.synced = true;
-    // Only set if the local values are still at their initial empty state
-    if (!displayName && profile.display_name) setDisplayName(profile.display_name);
-    if (!timezone && profile.timezone) setTimezone(profile.timezone);
-    if (currency === 'PHP' && profile.currency && profile.currency !== 'PHP') {
-      setCurrency(profile.currency);
-    }
-  }
+  // Sync from Clerk user when it arrives
+  useEffect(() => {
+    if (clerkEmail) setEmail(clerkEmail);
+    if (clerkName && !displayName) setDisplayName(clerkName);
+  }, [clerkEmail, clerkName]);
+
+  // Sync from DB profile when it loads (overrides Clerk defaults)
+  useEffect(() => {
+    if (!profileLoaded) return;
+    if (profile.email) setEmail(profile.email);
+    if (profile.display_name) setDisplayName(profile.display_name);
+    if (profile.timezone) setTimezone(profile.timezone);
+    if (profile.currency) setCurrency(profile.currency);
+  }, [profileLoaded, profile]);
 
   const handleSave = useCallback(async () => {
     setSaving(true);
@@ -76,7 +83,7 @@ export default function ProfileCard() {
           <input
             type="email"
             className={styles.fieldInput}
-            value={profile.email || ''}
+            value={email}
             disabled
           />
         </div>

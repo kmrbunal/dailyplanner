@@ -65,6 +65,7 @@ export default function PlannerLayout() {
       <Header
         headerGradient={theme.gradient}
         onClearDay={() => setShowClearConfirm(true)}
+        onAccountClick={() => setActiveTab('account')}
       />
       <SaveIndicator />
       <AlarmOverlay />

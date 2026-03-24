@@ -4,8 +4,9 @@ import { useStoreContext } from '../../../context/StoreContext';
 import styles from './AccountTab.module.css';
 
 export default function DataSummaryCard() {
-  const { profile, session } = useAuthContext();
+  const { user, profile, session } = useAuthContext();
   const { cloudDates, synced } = useStoreContext();
+  const email = profile.email || user?.emailAddresses?.[0]?.emailAddress || '';
 
   const [daysCount, setDaysCount] = useState(null);
 
@@ -31,7 +32,7 @@ export default function DataSummaryCard() {
           <>
             Days recorded: <strong>{daysCount ?? 0}</strong>
             <br />
-            Account email: <strong>{profile.email || ''}</strong>
+            Account email: <strong>{email}</strong>
             <br />
             Synced to cloud:{' '}
             <strong>{session && synced ? 'Yes' : 'Pending'}</strong>

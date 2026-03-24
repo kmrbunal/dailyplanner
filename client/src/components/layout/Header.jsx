@@ -26,7 +26,7 @@ function LiveClock() {
   return <div className={styles.liveClock}>{time}</div>
 }
 
-export default function Header({ headerGradient, onClearDay }) {
+export default function Header({ headerGradient, onClearDay, onAccountClick }) {
   const { signOut } = useClerk()
   const { user } = useUser()
   const { currentDate, switchDate } = useDayContext()
@@ -43,7 +43,7 @@ export default function Header({ headerGradient, onClearDay }) {
   return (
     <div className={styles.header} style={{ background: headerGradient }}>
       <div className={styles.userBar}>
-        <span className={styles.userName}>{userName}</span>
+        <span className={styles.userName} onClick={onAccountClick} style={{ cursor: 'pointer' }}>{userName}</span>
         <button className={styles.signOutBtn} onClick={() => signOut()}>Sign Out</button>
       </div>
       <LiveClock />
