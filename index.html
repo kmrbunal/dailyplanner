@@ -134,6 +134,102 @@
     }
 
     /* Confirmation overlay */
+    /* Alarm overlay */
+    .alarm-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .alarm-overlay.show {
+      display: flex;
+    }
+
+    .alarm-modal {
+      background: white;
+      border-radius: 24px;
+      padding: 40px 32px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: popIn 0.3s ease;
+    }
+
+    .alarm-modal-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+      animation: alarmPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes alarmPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15) rotate(8deg); }
+    }
+
+    .alarm-modal h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--accent-dark);
+      margin-bottom: 8px;
+    }
+
+    .alarm-modal p {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 6px;
+    }
+
+    .alarm-modal .alarm-task-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 12px 0 24px;
+      padding: 12px 16px;
+      background: var(--accent-light);
+      border-radius: 12px;
+    }
+
+    .alarm-modal-btns {
+      display: flex;
+      gap: 12px;
+    }
+
+    .alarm-modal-btns button {
+      flex: 1;
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .alarm-modal-btns button:active {
+      transform: scale(0.97);
+    }
+
+    .alarm-btn-snooze {
+      background: var(--accent-light);
+      color: var(--accent-dark);
+    }
+
+    .alarm-btn-stop {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 4px 12px rgba(74, 92, 62, 0.3);
+    }
+
     .confirm-overlay {
       display: none;
       position: fixed;
@@ -1822,6 +1918,7 @@
       </div>
       <div class="live-clock" id="liveClock"></div>
       <h1>Daily Planner</h1>
+      <p style="font-family:'DM Sans',sans-serif;font-size:11px;opacity:0.7;letter-spacing:2px;text-transform:uppercase;margin-top:2px;">by Cafe Mocha</p>
       <div class="date-nav">
         <button onclick="changeDate(-1)">‹</button>
         <div class="calendar-wrapper">
@@ -1851,6 +1948,20 @@
 
     <!-- Save Indicator Toast -->
     <div class="save-indicator" id="saveIndicator">💾 Saved</div>
+
+    <!-- Alarm Overlay -->
+    <div class="alarm-overlay" id="alarmOverlay">
+      <div class="alarm-modal">
+        <div class="alarm-modal-icon">🔔</div>
+        <h3>Reminder</h3>
+        <p id="alarmOverlayTime"></p>
+        <div class="alarm-task-name" id="alarmOverlayTask"></div>
+        <div class="alarm-modal-btns">
+          <button class="alarm-btn-snooze" onclick="snoozeAlarm()">Remind me in 5 min</button>
+          <button class="alarm-btn-stop" onclick="dismissAlarm()">Stop</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Clear All Confirmation -->
     <div class="confirm-overlay" id="clearConfirm">
@@ -2383,11 +2494,9 @@
                     <button class="symptom-btn" onclick="toggleSymptom(this)"
                       style="padding:4px 10px;border-radius:16px;border:1px solid #b8c8a4;background:white;font-size:11px;cursor:pointer;font-family:inherit;color:#888;transition:all 0.2s;">Fatigue</button>
                     <button class="symptom-btn" onclick="toggleSymptom(this)"
-                      style="padding:4px 10px;border-radius:16px;border:1px solid #b8c8a4;background:white;font-size:11px;cursor:pointer;font-family:inherit;color:#888;transition:all 0.2s;">Mood
-                      swings</button>
+                      style="padding:4px 10px;border-radius:16px;border:1px solid #b8c8a4;background:white;font-size:11px;cursor:pointer;font-family:inherit;color:#888;transition:all 0.2s;">Mood swings</button>
                     <button class="symptom-btn" onclick="toggleSymptom(this)"
-                      style="padding:4px 10px;border-radius:16px;border:1px solid #b8c8a4;background:white;font-size:11px;cursor:pointer;font-family:inherit;color:#888;transition:all 0.2s;">Back
-                      pain</button>
+                      style="padding:4px 10px;border-radius:16px;border:1px solid #b8c8a4;background:white;font-size:11px;cursor:pointer;font-family:inherit;color:#888;transition:all 0.2s;">Back pain</button>
                     <button class="symptom-btn" onclick="toggleSymptom(this)"
                       style="padding:4px 10px;border-radius:16px;border:1px solid #b8c8a4;background:white;font-size:11px;cursor:pointer;font-family:inherit;color:#888;transition:all 0.2s;">Acne</button>
                     <button class="symptom-btn" onclick="toggleSymptom(this)"
@@ -3127,10 +3236,57 @@
       // Migrate localStorage data to cloud on first sign-in
       await migrateLocalToCloud();
 
+      // Sync all store data from cloud into localStorage cache
+      await syncStoreFromCloud();
+
       // Load today's data (now from API)
       await loadDayData();
       loadMonthlyFinance();
       renderWeightProgress();
+    }
+
+    // Pull all cloud store data into localStorage so get* functions work instantly
+    async function syncStoreFromCloud() {
+      // Fetch cloud date list for calendar
+      try {
+        const dates = await apiGet('days');
+        if (dates && Array.isArray(dates)) _cloudDates = dates;
+      } catch (e) { }
+
+      const storeKeys = [
+        { cloud: 'weight_history', local: WEIGHT_HISTORY_KEY },
+        { cloud: 'gym_routines', local: GYM_ROUTINE_KEY },
+        { cloud: 'gym_weekly', local: GYM_WEEK_KEY },
+        { cloud: 'closedMonths', local: CLOSED_MONTHS_KEY },
+        { cloud: 'routines', local: 'dailyPlanner_routines' },
+      ];
+      for (const { cloud, local } of storeKeys) {
+        try {
+          const data = await apiLoadStore(cloud);
+          if (data) localStorage.setItem(local, JSON.stringify(data));
+        } catch (e) { }
+      }
+      // Sync current month's finance
+      try {
+        const mk = getMonthKey(getDateKey());
+        const mf = await apiLoadStore('monthlyFinance_' + mk);
+        if (mf) localStorage.setItem(MONTHLY_FINANCE_KEY + mk, JSON.stringify(mf));
+      } catch (e) { }
+
+      // Sync this month's day data so getMonthlyExpenseTotal() works correctly
+      if (_cloudDates && _cloudDates.length > 0) {
+        const monthPrefix = getDateKey().substring(0, 7); // "YYYY-MM"
+        const monthDates = _cloudDates.filter(d => d.startsWith(monthPrefix) && d !== getDateKey());
+        for (const d of monthDates) {
+          const lsKey = STORAGE_PREFIX + d;
+          if (!localStorage.getItem(lsKey)) {
+            try {
+              const json = await apiGet('days/' + d);
+              if (json && json.data) localStorage.setItem(lsKey, JSON.stringify(json.data));
+            } catch (e) { }
+          }
+        }
+      }
     }
 
     // Profile functions
@@ -3324,7 +3480,7 @@
       data.symptoms = [];
       document.querySelectorAll('.symptom-btn').forEach(b => {
         if (b.style.background.includes('94, 117, 80') || b.style.background.includes('#5e7550')) {
-          data.symptoms.push(b.textContent);
+          data.symptoms.push(b.textContent.trim());
         }
       });
 
@@ -3443,7 +3599,7 @@
       // Symptoms
       document.querySelectorAll('.symptom-btn').forEach(b => {
         b.style.background = 'white'; b.style.color = '#888'; b.style.borderColor = '#b8c8a4';
-        if (data.symptoms && data.symptoms.includes(b.textContent)) {
+        if (data.symptoms && data.symptoms.includes(b.textContent.trim())) {
           b.style.background = '#5e7550'; b.style.color = 'white'; b.style.borderColor = '#5e7550';
         }
       });
@@ -3678,13 +3834,13 @@
         if (!data.learning || data.learning.length === 0) {
           loadLearningMaster();
         }
-        return true;
       } else {
         loadLearningMaster();
       }
+      // Always render achievements and sync learning (regardless of whether day data existed)
       renderAchievements();
       syncLearningToPersonalTasks();
-      return false;
+      return !!data;
     }
 
     // Debounced auto-save
@@ -3694,26 +3850,36 @@
       _saveTimer = setTimeout(() => { saveDayData().catch(console.error); }, 1500);
     }
 
-    // Get all saved date keys
+    // Cache of cloud date keys (populated on sign-in)
+    let _cloudDates = [];
+
+    // Get all saved date keys (local + cloud)
     function getSavedDates() {
-      const dates = [];
+      const dates = new Set(_cloudDates);
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key.startsWith(STORAGE_PREFIX)) {
-          dates.push(key.replace(STORAGE_PREFIX, ''));
+        if (key && key.startsWith(STORAGE_PREFIX) && key.match(/\d{4}-\d{2}-\d{2}$/)) {
+          dates.add(key.replace(STORAGE_PREFIX, ''));
         }
       }
-      return dates;
+      return Array.from(dates);
     }
 
     // Switch date with save/load
     function switchDate(newDate) {
-      // Save current day in background (don't block UI)
-      saveDayData().catch(console.error);
-      // Update current date immediately
+      // Collect current day's data synchronously before clearing UI
+      const prevDateKey = getDateKey();
+      const prevData = collectDayData();
+      saveLearningMaster();
+      saveCompletedAchievements();
+      // Save to storage in background (uses pre-collected data)
+      const prevKey = STORAGE_PREFIX + prevDateKey;
+      localStorage.setItem(prevKey, JSON.stringify(prevData));
+      if (clerkUser) apiPut('days/' + prevDateKey, prevData).catch(console.error);
+
+      // Update current date and clear UI
       currentDate = newDate;
       document.getElementById('dateDisplay').textContent = formatDate(currentDate);
-      // Clear and load
       clearUI();
       loadDayData().catch(console.error);
       // Refresh weekly focus for the new date context
@@ -3799,6 +3965,7 @@
             if (key.startsWith('_')) return; // Skip metadata
             if (key.match(/^\d{4}-\d{2}-\d{2}$/)) {
               localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(allData[key]));
+              if (clerkUser) apiPut('days/' + key, allData[key]).catch(console.error);
               count++;
             }
           });
@@ -4002,8 +4169,9 @@
 
     // Mood selection
     function selectMood(btn) {
+      const wasSelected = btn.classList.contains('selected');
       document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
+      if (!wasSelected) btn.classList.add('selected');
       scheduleSave();
     }
 
@@ -4114,12 +4282,13 @@
       const newlyCompleted = currentItems.filter(l => l.text && l.status === 'done');
       if (newlyCompleted.length === 0) return;
 
-      // Load existing achievements
+      // Load existing achievements (localStorage is synced from cloud on sign-in)
       let achievements = [];
       try {
         const raw = localStorage.getItem(ACHIEVEMENTS_KEY);
         if (raw) achievements = JSON.parse(raw);
-      } catch (e) { }
+        if (!Array.isArray(achievements)) achievements = [];
+      } catch (e) { achievements = []; }
 
       // Add new achievements (avoid duplicates by checking text)
       const existing = new Set(achievements.map(a => a.text.toLowerCase().trim()));
@@ -4273,7 +4442,7 @@
         const raw = localStorage.getItem('dailyPlanner_routines');
         if (raw) try { routines = JSON.parse(raw); } catch (e) { }
       }
-      if (!routines || (routines.work.length + routines.health.length + routines.personal.length === 0)) {
+      if (!routines || ((routines.work || []).length + (routines.health || []).length + (routines.personal || []).length === 0)) {
         // Fall back to reading current routine inputs
         const r = {
           work: getRoutineTexts('routineWork'),
@@ -4311,7 +4480,8 @@
           } else {
             const item = document.createElement('div');
             item.className = 'todo-item';
-            item.innerHTML = '<input type="checkbox" class="priority-check" onchange="updateProgress()"><input type="text" value="' + text.replace(/"/g, '&quot;') + '">';
+            item.style.position = 'relative';
+            item.innerHTML = '<input type="checkbox" class="priority-check" onchange="updateProgress(); scheduleSave();"><input type="text" value="' + text.replace(/"/g, '&quot;') + '" placeholder="Add a task..."><span class="alarm-time"></span><button class="alarm-btn" onclick="toggleAlarmPicker(this)" title="Set reminder">🔔</button><div class="alarm-picker"><input type="time"><button onclick="setAlarm(this)">Set Alarm</button><button class="alarm-clear-btn" onclick="clearAlarm(this)">Clear</button></div>';
             list.appendChild(item);
           }
           count++;
@@ -4366,24 +4536,7 @@
       const ms = alarmDate.getTime() - now.getTime();
       if (ms > 0) {
         const timerId = setTimeout(() => {
-          // Browser notification
-          if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification('⏰ Daily Planner Reminder', { body: taskText, icon: '🔔' });
-          }
-          // Also show in-page alert
-          showToast('⏰ Reminder: ' + taskText, '');
-          // Play a gentle beep
-          try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain); gain.connect(ctx.destination);
-            osc.frequency.value = 800; gain.gain.value = 0.3;
-            osc.start(); osc.stop(ctx.currentTime + 0.3);
-            setTimeout(() => { osc.start && ctx.close(); }, 500);
-          } catch (e) { }
-          alarmBtn.classList.remove('set');
-          alarmTime.textContent = '';
+          fireAlarm(taskText, time, item);
         }, ms);
 
         // Store timer so we can clear it
@@ -4414,6 +4567,89 @@
         activeAlarms.splice(idx, 1);
       }
       scheduleSave();
+    }
+
+    // ========== ALARM OVERLAY ==========
+    let _currentAlarmCtx = null; // Audio context for alarm sound
+    let _currentAlarmOsc = null; // Oscillator for repeating beep
+    let _currentAlarmTask = '';
+    let _currentAlarmItem = null;
+
+    function fireAlarm(taskText, time, item) {
+      _currentAlarmTask = taskText;
+      _currentAlarmItem = item;
+
+      // Show overlay
+      document.getElementById('alarmOverlayTask').textContent = taskText;
+      document.getElementById('alarmOverlayTime').textContent = time;
+      document.getElementById('alarmOverlay').classList.add('show');
+
+      // Browser notification
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('⏰ Daily Planner Reminder', { body: taskText });
+      }
+
+      // Play repeating beep
+      try {
+        _currentAlarmCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function beep() {
+          if (!_currentAlarmCtx || _currentAlarmCtx.state === 'closed') return;
+          const osc = _currentAlarmCtx.createOscillator();
+          const gain = _currentAlarmCtx.createGain();
+          osc.connect(gain); gain.connect(_currentAlarmCtx.destination);
+          osc.frequency.value = 880; gain.gain.value = 0.25;
+          osc.start(); osc.stop(_currentAlarmCtx.currentTime + 0.15);
+          setTimeout(() => {
+            if (!_currentAlarmCtx || _currentAlarmCtx.state === 'closed') return;
+            const osc2 = _currentAlarmCtx.createOscillator();
+            const gain2 = _currentAlarmCtx.createGain();
+            osc2.connect(gain2); gain2.connect(_currentAlarmCtx.destination);
+            osc2.frequency.value = 1100; gain2.gain.value = 0.25;
+            osc2.start(); osc2.stop(_currentAlarmCtx.currentTime + 0.15);
+          }, 200);
+        }
+        beep();
+        _currentAlarmOsc = setInterval(beep, 3000); // Beep every 3 seconds
+      } catch (e) { }
+
+      // Clear the alarm indicator on the task
+      if (item) {
+        const btn = item.querySelector('.alarm-btn');
+        const at = item.querySelector('.alarm-time');
+        if (btn) btn.classList.remove('set');
+        if (at) at.textContent = '';
+      }
+    }
+
+    function stopAlarmSound() {
+      if (_currentAlarmOsc) { clearInterval(_currentAlarmOsc); _currentAlarmOsc = null; }
+      if (_currentAlarmCtx) { try { _currentAlarmCtx.close(); } catch (e) { } _currentAlarmCtx = null; }
+    }
+
+    function dismissAlarm() {
+      stopAlarmSound();
+      document.getElementById('alarmOverlay').classList.remove('show');
+      _currentAlarmItem = null;
+      _currentAlarmTask = '';
+      scheduleSave();
+    }
+
+    function snoozeAlarm() {
+      stopAlarmSound();
+      document.getElementById('alarmOverlay').classList.remove('show');
+      const task = _currentAlarmTask;
+      const item = _currentAlarmItem;
+      showToast('⏰ Snoozed — reminding in 5 min', '');
+
+      // Schedule again in 5 minutes
+      const timerId = setTimeout(() => {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        fireAlarm(task, h + ':' + m, item);
+      }, 5 * 60 * 1000);
+
+      if (item) activeAlarms.push({ timerId, item });
     }
 
     // Close alarm picker when clicking outside
@@ -4527,8 +4763,14 @@
 
       // Show delta indicator
       if (currentVal && prevEntry) {
-        const diff = currentVal - prevEntry.weight;
         const unit = todayEntry ? todayEntry.unit : document.getElementById('weightUnit').value;
+        // Convert previous entry to current unit if they differ
+        let prevWeight = prevEntry.weight;
+        if (prevEntry.unit !== unit) {
+          if (prevEntry.unit === 'kg' && unit === 'lbs') prevWeight = prevWeight * 2.20462;
+          else if (prevEntry.unit === 'lbs' && unit === 'kg') prevWeight = prevWeight / 2.20462;
+        }
+        const diff = currentVal - prevWeight;
         progressDiv.style.display = 'block';
 
         if (Math.abs(diff) < 0.01) {
@@ -4623,8 +4865,10 @@
     }
 
     // Hook into weight input
+    let _weightTimer = null;
     document.getElementById('weightInput').addEventListener('input', function () {
-      saveWeightEntry();
+      clearTimeout(_weightTimer);
+      _weightTimer = setTimeout(() => { saveWeightEntry(); }, 1500);
       scheduleSave();
     });
     document.getElementById('weightUnit').addEventListener('change', function () {
@@ -5233,10 +5477,10 @@
       }
 
       // Auto-show panel during last 3 days of month
-      const today = new Date();
-      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-      const daysLeft = lastDay - today.getDate();
-      if (daysLeft <= 3 && !alreadyClosed && budget > 0) {
+      const viewDate = currentDate || new Date();
+      const lastDay = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
+      const daysLeft = lastDay - viewDate.getDate();
+      if (daysLeft <= 2 && !alreadyClosed && budget > 0) {
         openCloseOutMonth();
       }
     }
@@ -5516,6 +5760,10 @@
     async function clearAllAndStartNew() {
       hideClearConfirm();
 
+      // Cancel all active alarms
+      activeAlarms.forEach(a => clearTimeout(a.timer));
+      activeAlarms.length = 0;
+
       // Save current day before clearing
       await saveDayData();
 
@@ -5539,6 +5787,10 @@
           else {
             item.querySelector('.priority-check').checked = false;
             item.querySelector('input[type="text"]').value = '';
+            const alarmTime = item.querySelector('.alarm-time');
+            if (alarmTime) alarmTime.textContent = '';
+            const alarmBtn = item.querySelector('.alarm-btn');
+            if (alarmBtn) alarmBtn.classList.remove('set');
           }
         });
       });
@@ -5557,7 +5809,9 @@
         b.style.borderColor = '#b8c8a4';
       });
       document.getElementById('cycleDay').value = '';
+      document.getElementById('cycleLength').value = '28';
       document.getElementById('phaseLabel').textContent = '';
+      document.querySelectorAll('.phase-indicator').forEach(p => { p.style.opacity = '1'; p.style.height = '6px'; });
       document.querySelectorAll('.symptom-btn').forEach(b => {
         b.style.background = 'white';
         b.style.color = '#888';
@@ -5689,9 +5943,13 @@
 
       let phase = '';
       let activePhase = '';
+      // Phase boundaries scale with cycle length (luteal is ~14 days, ovulation ~2 days before)
+      const lutealStart = len - 13;
+      const ovulationStart = lutealStart - 2;
+      const follicularStart = 6;
       if (day <= 5) { phase = 'Menstrual Phase — Day ' + day; activePhase = 'menstrual'; }
-      else if (day <= 13) { phase = 'Follicular Phase — Day ' + day; activePhase = 'follicular'; }
-      else if (day <= 16) { phase = 'Ovulation Window — Day ' + day; activePhase = 'ovulation'; }
+      else if (day < ovulationStart) { phase = 'Follicular Phase — Day ' + day; activePhase = 'follicular'; }
+      else if (day < lutealStart) { phase = 'Ovulation Window — Day ' + day; activePhase = 'ovulation'; }
       else { phase = 'Luteal Phase — Day ' + day; activePhase = 'luteal'; }
 
       document.getElementById('phaseLabel').textContent = phase;
