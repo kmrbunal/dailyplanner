@@ -629,6 +629,115 @@
       font-size: 12px;
     }
 
+    /* Gym Exercise Row */
+    .gym-exercise-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      background: #f5f6f0;
+      border-radius: 10px;
+      font-size: 13px;
+    }
+
+    .gym-exercise-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .gym-exercise-row .exercise-name {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--text);
+      background: transparent;
+      min-width: 0;
+    }
+
+    .gym-exercise-row .exercise-detail {
+      width: 55px;
+      text-align: center;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 11px;
+      color: var(--text-light);
+      background: transparent;
+    }
+
+    .gym-exercise-row .exercise-detail-label {
+      font-size: 9px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .gym-exercise-row input[type="checkbox"]:checked+.exercise-name {
+      text-decoration: line-through;
+      color: var(--text-light);
+    }
+
+    /* Gym Weekly Focus Tracker */
+    .gym-week-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .gym-week-day {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .gym-week-col.is-today .gym-week-day {
+      color: var(--accent);
+      background: var(--accent-light);
+      padding: 1px 6px;
+      border-radius: 8px;
+    }
+
+    .gym-week-select {
+      width: 100%;
+      font-size: 9px;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: white;
+      color: var(--text);
+      padding: 3px 1px;
+      cursor: pointer;
+      text-align: center;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .gym-week-select:focus {
+      border-color: var(--accent);
+    }
+
+    .gym-week-col.is-today .gym-week-select {
+      border-color: var(--accent);
+      background: #edf2e8;
+      font-weight: 600;
+    }
+
+    .gym-week-col.day-done .gym-week-day {
+      text-decoration: line-through;
+      opacity: 0.5;
+    }
+
     /* Water Tracker */
     .water-glasses {
       display: flex;
@@ -1452,9 +1561,9 @@
       grid-template-columns: 1fr 1fr 1fr;
     }
 
-    /* Wellness: 2 columns for mood/gratitude */
+    /* Wellness: 3 columns for mood/gratitude/gym */
     [data-carousel="wellness"] .carousel-track {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
     }
 
     /* The 4th slide in Health (Meals) spans full width on desktop */
@@ -1464,6 +1573,11 @@
     }
 
     .carousel-dots {
+      display: none;
+      /* Hidden on desktop */
+    }
+
+    .carousel-nav {
       display: none;
       /* Hidden on desktop */
     }
@@ -1509,11 +1623,47 @@
         width: 100%;
       }
 
+      .carousel-nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 4px 0 10px;
+      }
+
+      .carousel-nav-btn {
+        background: var(--accent-light);
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 13px;
+        color: var(--accent);
+        transition: all 0.2s;
+        flex-shrink: 0;
+        font-family: inherit;
+        padding: 0;
+      }
+
+      .carousel-nav-btn:hover {
+        background: var(--accent);
+        color: white;
+      }
+
+      .carousel-nav-btn:disabled {
+        opacity: 0.3;
+        pointer-events: none;
+      }
+
       .carousel-dots {
         display: flex;
         justify-content: center;
+        align-items: center;
         gap: 6px;
-        padding: 10px 0 4px;
       }
 
       .carousel-dot {
@@ -1534,41 +1684,7 @@
       }
 
       .carousel-arrows {
-        display: flex;
-        justify-content: space-between;
-        position: absolute;
-        top: 50%;
-        left: -2px;
-        right: -2px;
-        transform: translateY(-50%);
-        pointer-events: none;
-        z-index: 5;
-      }
-
-      .carousel-arrow {
-        pointer-events: all;
-        background: rgba(255, 255, 255, 0.85);
-        border: 1px solid var(--border);
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 14px;
-        color: var(--accent);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: opacity 0.2s;
-      }
-
-      .carousel-arrow:hover {
-        background: var(--accent-light);
-      }
-
-      .carousel-arrow.hidden {
-        opacity: 0;
-        pointer-events: none;
+        display: none;
       }
 
       /* On mobile, carousel track is flex not grid */
@@ -1748,26 +1864,30 @@
     <div class="tab-nav">
       <button class="tab-btn active" onclick="switchTab('tasks')" data-tab="tasks"><span class="tab-icon">📋</span><span
           class="tab-label">Tasks</span></button>
-      <button class="tab-btn" onclick="switchTab('wellness')" data-tab="wellness"><span class="tab-icon">🧘</span><span
-          class="tab-label">Wellness</span></button>
       <button class="tab-btn" onclick="switchTab('health')" data-tab="health"><span class="tab-icon">💪</span><span
           class="tab-label">Health</span></button>
-      <button class="tab-btn" onclick="switchTab('routines')" data-tab="routines"><span class="tab-icon">🔁</span><span
-          class="tab-label">Routines</span></button>
-      <button class="tab-btn" onclick="switchTab('learn')" data-tab="learn"><span class="tab-icon">📚</span><span
-          class="tab-label">Learn</span></button>
-      <button class="tab-btn" onclick="switchTab('notes')" data-tab="notes"><span class="tab-icon">📝</span><span
-          class="tab-label">Notes</span></button>
+      <button class="tab-btn" onclick="switchTab('wellness')" data-tab="wellness"><span class="tab-icon">🧘</span><span
+          class="tab-label">Wellness</span></button>
       <button class="tab-btn" onclick="switchTab('finance')" data-tab="finance"><span class="tab-icon">💰</span><span
           class="tab-label">Finance</span></button>
       <button class="tab-btn" onclick="switchTab('inspire')" data-tab="inspire"><span class="tab-icon">💡</span><span
           class="tab-label">Inspire</span></button>
+      <button class="tab-btn" onclick="switchTab('learn')" data-tab="learn"><span class="tab-icon">📚</span><span
+          class="tab-label">Learn</span></button>
+      <button class="tab-btn" onclick="switchTab('notes')" data-tab="notes"><span class="tab-icon">📝</span><span
+          class="tab-label">Notes</span></button>
+      <button class="tab-btn" onclick="switchTab('routines')" data-tab="routines"><span class="tab-icon">🔁</span><span
+          class="tab-label">Routines</span></button>
     </div>
 
     <div class="tab-content">
       <!-- TAB: Tasks -->
       <div class="tab-panel active" id="tab-tasks">
         <div class="card-carousel" data-carousel="tasks">
+          <div class="carousel-nav"><button class="carousel-nav-btn carousel-prev" aria-label="Previous card">‹</button>
+            <div class="carousel-dots"></div><button class="carousel-nav-btn carousel-next"
+              aria-label="Next card">›</button>
+          </div>
           <div class="carousel-track">
             <!-- Slide 1: Work -->
             <div class="carousel-slide">
@@ -1929,13 +2049,16 @@
             </div>
 
           </div><!-- /carousel-track -->
-          <div class="carousel-dots"></div>
         </div><!-- /card-carousel -->
       </div><!-- /tab-tasks -->
 
       <!-- TAB: Wellness -->
       <div class="tab-panel" id="tab-wellness">
         <div class="card-carousel" data-carousel="wellness">
+          <div class="carousel-nav"><button class="carousel-nav-btn carousel-prev" aria-label="Previous card">‹</button>
+            <div class="carousel-dots"></div><button class="carousel-nav-btn carousel-next"
+              aria-label="Next card">›</button>
+          </div>
           <div class="carousel-track">
             <!-- Slide 1: Mood -->
             <div class="carousel-slide">
@@ -1950,7 +2073,149 @@
                 </div>
               </div>
             </div>
-            <!-- Slide 2: Gratitude -->
+            <!-- Slide 2: Gym Program -->
+            <div class="carousel-slide">
+              <div class="wellness-card" style="text-align:left;min-height:320px;">
+                <div class="card-title" style="justify-content:center;"><span class="icon"
+                    style="background:#dde6d4">🏋️</span> Gym Program</div>
+
+                <!-- Weekly Focus Tracker -->
+                <div id="gymWeeklyFocus"
+                  style="margin-bottom:14px;padding:10px 12px;background:#f5f6f0;border-radius:12px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                    <div
+                      style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);">
+                      Weekly Schedule</div>
+                    <div id="gymWeekLabel" style="font-size:9px;color:var(--text-light);"></div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;" id="gymWeekGrid">
+                    <div class="gym-week-col" data-dow="1">
+                      <div class="gym-week-day">Mon</div><select class="gym-week-select" onchange="onGymWeekChange()">
+                        <option value="">—</option>
+                        <option value="upper">💪 Upper</option>
+                        <option value="lower">🦵 Lower</option>
+                        <option value="cardio">🫀 Cardio</option>
+                        <option value="full">🔥 Full</option>
+                        <option value="rest">🧘 Rest</option>
+                      </select>
+                    </div>
+                    <div class="gym-week-col" data-dow="2">
+                      <div class="gym-week-day">Tue</div><select class="gym-week-select" onchange="onGymWeekChange()">
+                        <option value="">—</option>
+                        <option value="upper">💪 Upper</option>
+                        <option value="lower">🦵 Lower</option>
+                        <option value="cardio">🫀 Cardio</option>
+                        <option value="full">🔥 Full</option>
+                        <option value="rest">🧘 Rest</option>
+                      </select>
+                    </div>
+                    <div class="gym-week-col" data-dow="3">
+                      <div class="gym-week-day">Wed</div><select class="gym-week-select" onchange="onGymWeekChange()">
+                        <option value="">—</option>
+                        <option value="upper">💪 Upper</option>
+                        <option value="lower">🦵 Lower</option>
+                        <option value="cardio">🫀 Cardio</option>
+                        <option value="full">🔥 Full</option>
+                        <option value="rest">🧘 Rest</option>
+                      </select>
+                    </div>
+                    <div class="gym-week-col" data-dow="4">
+                      <div class="gym-week-day">Thu</div><select class="gym-week-select" onchange="onGymWeekChange()">
+                        <option value="">—</option>
+                        <option value="upper">💪 Upper</option>
+                        <option value="lower">🦵 Lower</option>
+                        <option value="cardio">🫀 Cardio</option>
+                        <option value="full">🔥 Full</option>
+                        <option value="rest">🧘 Rest</option>
+                      </select>
+                    </div>
+                    <div class="gym-week-col" data-dow="5">
+                      <div class="gym-week-day">Fri</div><select class="gym-week-select" onchange="onGymWeekChange()">
+                        <option value="">—</option>
+                        <option value="upper">💪 Upper</option>
+                        <option value="lower">🦵 Lower</option>
+                        <option value="cardio">🫀 Cardio</option>
+                        <option value="full">🔥 Full</option>
+                        <option value="rest">🧘 Rest</option>
+                      </select>
+                    </div>
+                    <div class="gym-week-col" data-dow="6">
+                      <div class="gym-week-day">Sat</div><select class="gym-week-select" onchange="onGymWeekChange()">
+                        <option value="">—</option>
+                        <option value="upper">💪 Upper</option>
+                        <option value="lower">🦵 Lower</option>
+                        <option value="cardio">🫀 Cardio</option>
+                        <option value="full">🔥 Full</option>
+                        <option value="rest">🧘 Rest</option>
+                      </select>
+                    </div>
+                    <div class="gym-week-col" data-dow="0">
+                      <div class="gym-week-day">Sun</div><select class="gym-week-select" onchange="onGymWeekChange()">
+                        <option value="">—</option>
+                        <option value="upper">💪 Upper</option>
+                        <option value="lower">🦵 Lower</option>
+                        <option value="cardio">🫀 Cardio</option>
+                        <option value="full">🔥 Full</option>
+                        <option value="rest">🧘 Rest</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div id="gymTodaySuggestion"
+                    style="margin-top:8px;font-size:11px;color:var(--accent);font-weight:600;text-align:center;display:none;">
+                  </div>
+                </div>
+
+                <!-- Workout Day Type -->
+                <div style="margin-bottom:14px;">
+                  <div
+                    style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:8px;">
+                    Today's Focus</div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;" id="gymDayBtns">
+                    <button class="gym-day-btn" data-day="upper" onclick="selectGymDay(this)"
+                      style="padding:6px 14px;border-radius:20px;border:1.5px solid #b8c8a4;background:white;font-size:12px;cursor:pointer;font-family:inherit;color:#888;transition:all 0.2s;">💪
+                      Upper Body</button>
+                    <button class="gym-day-btn" data-day="lower" onclick="selectGymDay(this)"
+                      style="padding:6px 14px;border-radius:20px;border:1.5px solid #b8c8a4;background:white;font-size:12px;cursor:pointer;font-family:inherit;color:#888;transition:all 0.2s;">🦵
+                      Lower Body</button>
+                    <button class="gym-day-btn" data-day="cardio" onclick="selectGymDay(this)"
+                      style="padding:6px 14px;border-radius:20px;border:1.5px solid #b8c8a4;background:white;font-size:12px;cursor:pointer;font-family:inherit;color:#888;transition:all 0.2s;">🫀
+                      Cardio</button>
+                    <button class="gym-day-btn" data-day="full" onclick="selectGymDay(this)"
+                      style="padding:6px 14px;border-radius:20px;border:1.5px solid #b8c8a4;background:white;font-size:12px;cursor:pointer;font-family:inherit;color:#888;transition:all 0.2s;">🔥
+                      Full Body</button>
+                    <button class="gym-day-btn" data-day="rest" onclick="selectGymDay(this)"
+                      style="padding:6px 14px;border-radius:20px;border:1.5px solid #b8c8a4;background:white;font-size:12px;cursor:pointer;font-family:inherit;color:#888;transition:all 0.2s;">🧘
+                      Rest / Active Recovery</button>
+                  </div>
+                </div>
+
+                <!-- Suggested Exercises (auto-populated based on day type) -->
+                <div style="margin-bottom:10px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                    <div
+                      style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--accent);">
+                      Exercises</div>
+                    <div id="gymDayLabel"
+                      style="font-size:11px;font-weight:700;color:#5e7550;background:#dfe6d8;padding:3px 10px;border-radius:12px;display:none;">
+                    </div>
+                  </div>
+                  <div id="gymExerciseList" style="display:flex;flex-direction:column;gap:6px;"></div>
+                  <div style="display:flex;gap:8px;margin-top:8px;">
+                    <button class="add-btn" style="flex:1;" onclick="addGymExercise()">+ Add exercise</button>
+                    <button class="add-btn" style="flex:1;background:#dfe6d8;color:#3d5a2e;"
+                      onclick="saveGymRoutine()">💾 Save as routine</button>
+                  </div>
+                </div>
+
+                <!-- Gym Notes -->
+                <div>
+                  <textarea id="gymNotes" class="notes-area" style="min-height:40px;font-size:12px;"
+                    placeholder="How did the workout feel? PRs, fatigue, adjustments..."
+                    oninput="scheduleSave()"></textarea>
+                </div>
+              </div>
+            </div>
+            <!-- Slide 3: Gratitude -->
             <div class="carousel-slide">
               <div class="wellness-card">
                 <div class="card-title"><span class="icon" style="background:var(--gold-light)">✨</span> Gratitude</div>
@@ -1962,13 +2227,16 @@
               </div>
             </div>
           </div><!-- /carousel-track -->
-          <div class="carousel-dots"></div>
         </div><!-- /card-carousel -->
       </div><!-- /tab-wellness -->
 
       <!-- TAB: Health Tracking -->
       <div class="tab-panel" id="tab-health">
         <div class="card-carousel" data-carousel="health">
+          <div class="carousel-nav"><button class="carousel-nav-btn carousel-prev" aria-label="Previous card">‹</button>
+            <div class="carousel-dots"></div><button class="carousel-nav-btn carousel-next"
+              aria-label="Next card">›</button>
+          </div>
           <div class="carousel-track">
             <!-- Slide 1: Water Intake -->
             <div class="carousel-slide">
@@ -1993,7 +2261,23 @@
                     <option value="lbs">lbs</option>
                   </select>
                 </div>
-                <div style="margin-top:10px;font-size:11px;color:var(--text-light)">Log your daily weight</div>
+                <!-- Weight Progress Indicator -->
+                <div id="weightProgress" style="margin-top:12px;text-align:center;display:none;">
+                  <div id="weightDelta" style="font-size:15px;font-weight:700;letter-spacing:0.5px;"></div>
+                  <div id="weightPrevLabel" style="font-size:10px;color:var(--text-light);margin-top:2px;"></div>
+                </div>
+                <div id="weightHistory"
+                  style="margin-top:10px;display:flex;justify-content:center;gap:3px;align-items:flex-end;height:40px;">
+                </div>
+                <!-- Weight History Log -->
+                <div id="weightHistoryLog"
+                  style="margin-top:12px;max-height:150px;overflow-y:auto;scrollbar-width:thin;border-top:1px solid var(--border);padding-top:8px;display:none;">
+                  <div
+                    style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:6px;">
+                    History</div>
+                  <div id="weightHistoryRows" style="display:flex;flex-direction:column;gap:4px;"></div>
+                </div>
+                <div style="margin-top:6px;font-size:10px;color:var(--text-light)">Log your daily weight</div>
               </div>
             </div>
 
@@ -2157,7 +2441,6 @@
             </div>
 
           </div><!-- /carousel-track -->
-          <div class="carousel-dots"></div>
         </div><!-- /card-carousel -->
       </div><!-- /tab-health -->
 
@@ -2334,55 +2617,135 @@
       <!-- TAB: Finance -->
       <div class="tab-panel" id="tab-finance">
         <div class="card-carousel" data-carousel="finance">
+          <div class="carousel-nav"><button class="carousel-nav-btn carousel-prev" aria-label="Previous card">‹</button>
+            <div class="carousel-dots"></div><button class="carousel-nav-btn carousel-next"
+              aria-label="Next card">›</button>
+          </div>
           <div class="carousel-track">
-            <!-- Slide 1: Daily Budget Overview -->
+            <!-- Slide 1: Monthly Budget Overview -->
             <div class="carousel-slide">
               <div class="card" style="grid-column:span 2;">
                 <div class="card-title" style="color:var(--accent);"><span class="icon"
-                    style="background:var(--accent-light);">💰</span> Daily Finance Tracker</div>
+                    style="background:var(--accent-light);">💰</span> Monthly Finance Tracker</div>
 
-                <!-- Budget Summary Row -->
-                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px;">
-                  <div style="background:var(--accent-light);border-radius:12px;padding:14px;text-align:center;">
+                <!-- Available Funds -->
+                <div style="margin-bottom:16px;">
+                  <div
+                    style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:8px;">
+                    Monthly Starting Funds</div>
+                  <div style="display:flex;flex-direction:column;gap:8px;">
                     <div
-                      style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:6px;">
-                      Daily Budget</div>
-                    <div style="display:flex;align-items:baseline;justify-content:center;gap:2px;">
-                      <span style="font-size:14px;color:var(--text-light);">₱</span>
-                      <input type="number" id="dailyBudget" placeholder="0" step="0.01"
-                        style="width:90px;text-align:center;font-size:22px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent-dark);background:transparent;">
+                      style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--accent-light);border-radius:10px;">
+                      <span style="font-size:16px;">💵</span>
+                      <span style="flex:1;font-size:13px;font-weight:600;color:var(--text);">Cash on Hand</span>
+                      <span style="font-size:13px;color:var(--text-light);">₱</span>
+                      <input type="number" id="cashOnHand" placeholder="0" step="0.01"
+                        style="width:100px;text-align:right;font-size:15px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent-dark);background:transparent;"
+                        oninput="recalcFinance(); saveMonthlyFinance();">
+                    </div>
+                    <div
+                      style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f5f6f0;border-radius:10px;">
+                      <span style="font-size:16px;">📱</span>
+                      <span style="flex:1;font-size:13px;font-weight:600;color:var(--text);">Digital Wallets</span>
+                      <span style="font-size:13px;color:var(--text-light);">₱</span>
+                      <input type="number" id="digitalWallet" placeholder="0" step="0.01"
+                        style="width:100px;text-align:right;font-size:15px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent-dark);background:transparent;"
+                        oninput="recalcFinance(); saveMonthlyFinance();">
                     </div>
                   </div>
-                  <div style="background:#e8eddf;border-radius:12px;padding:14px;text-align:center;">
+                </div>
+
+                <!-- Monthly Summary -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+                  <div style="background:var(--accent-light);border-radius:12px;padding:12px;text-align:center;">
                     <div
-                      style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#6b7c3f;margin-bottom:6px;">
-                      Total Spent</div>
-                    <div style="font-size:22px;font-weight:700;color:#6b7c3f;" id="totalSpent">₱0.00</div>
+                      style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:4px;">
+                      Starting Budget</div>
+                    <div style="font-size:18px;font-weight:700;color:var(--accent-dark);" id="totalBudgetDisplay">₱0.00
+                    </div>
                   </div>
-                  <div style="border-radius:12px;padding:14px;text-align:center;" id="remainingBox">
+                  <div style="background:#e8eddf;border-radius:12px;padding:12px;text-align:center;">
                     <div
-                      style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;"
+                      style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#6b7c3f;margin-bottom:4px;">
+                      Month Spent</div>
+                    <div style="font-size:18px;font-weight:700;color:#6b7c3f;" id="totalSpent">₱0.00</div>
+                  </div>
+                </div>
+                <!-- Daily Rolling Balance -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+                  <div style="background:#eef4e8;border-radius:12px;padding:12px;text-align:center;">
+                    <div
+                      style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:4px;">
+                      Today's Available</div>
+                    <div style="font-size:18px;font-weight:700;color:var(--accent-dark);" id="todayAvailable">₱0.00
+                    </div>
+                    <div style="font-size:9px;color:var(--text-light);margin-top:2px;" id="todayAvailableNote">
+                      Yesterday's balance</div>
+                  </div>
+                  <div style="border-radius:12px;padding:12px;text-align:center;" id="remainingBox">
+                    <div
+                      style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;"
                       id="remainingLabel">Remaining</div>
-                    <div style="font-size:22px;font-weight:700;" id="remainingAmount">₱0.00</div>
+                    <div style="font-size:18px;font-weight:700;" id="remainingAmount">₱0.00</div>
+                    <div style="font-size:9px;color:var(--text-light);margin-top:2px;">After today's expenses</div>
+                  </div>
+                </div>
+
+                <!-- Close Out Month Button (always visible) -->
+                <div id="closeOutBtnWrap" style="margin-bottom:14px;text-align:center;">
+                  <button id="closeOutMonthBtn" onclick="openCloseOutMonth()"
+                    style="padding:10px 24px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:white;border:none;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:opacity 0.2s;width:100%;">
+                    📋 Close Out Month & Allocate Remaining
+                  </button>
+                  <div id="closeOutStatus"
+                    style="display:none;font-size:12px;color:var(--accent);font-weight:600;margin-top:6px;"></div>
+                </div>
+
+                <!-- End of Month Allocation Panel -->
+                <div id="endOfMonthNotice"
+                  style="display:none;margin-bottom:14px;padding:14px;background:linear-gradient(135deg,#e8f5e9,#fff8e1);border:1px solid #c8e6c9;border-radius:12px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <span style="font-size:18px;">🔔</span>
+                      <span style="font-size:13px;font-weight:700;color:var(--accent-dark);">Month-End Allocation</span>
+                    </div>
+                    <button onclick="closeCloseOutPanel()"
+                      style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-light);padding:0 4px;">×</button>
+                  </div>
+                  <div style="font-size:12px;color:var(--text);line-height:1.5;margin-bottom:10px;" id="endOfMonthMsg">
+                  </div>
+
+                  <!-- Allocation Panel -->
+                  <div id="allocatePanel" style="display:none;">
+                    <div
+                      style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:8px;">
+                      Allocate Remaining To:</div>
+                    <div id="allocateRows" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;"></div>
+                    <div
+                      style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--accent-light);border-radius:8px;margin-bottom:10px;">
+                      <span style="font-size:11px;font-weight:600;color:var(--accent);">Unallocated</span>
+                      <span style="font-size:13px;font-weight:700;color:var(--accent-dark);"
+                        id="allocateUnallocated">₱0.00</span>
+                    </div>
+                    <button id="allocateRemainingBtn" onclick="handleAllocateRemaining()"
+                      style="width:100%;padding:10px 16px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:white;border:none;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:opacity 0.2s;">Confirm
+                      & Close Out Month</button>
+                    <div id="allocateError"
+                      style="display:none;margin-top:8px;padding:10px;background:#fff0f0;border:1px solid #e8c0c0;border-radius:8px;font-size:11px;color:#8b3a3a;line-height:1.5;">
+                    </div>
                   </div>
                 </div>
 
                 <!-- Expense Log -->
-                <div style="margin-bottom:16px;">
-                  <div
-                    style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:10px;">
-                    Today's Expenses</div>
+                <div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                    <div
+                      style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);">
+                      Today's Expenses</div>
+                    <div style="font-size:11px;color:var(--text-light);" id="todayExpenseTotal">₱0.00 today</div>
+                  </div>
                   <div id="expenseList" style="display:flex;flex-direction:column;gap:8px;"></div>
                   <button class="add-btn" style="margin-top:10px;" onclick="addExpense()">+ Add expense</button>
-                </div>
-
-                <!-- Income Log -->
-                <div style="margin-bottom:16px;">
-                  <div
-                    style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:#6b7c3f;margin-bottom:10px;">
-                    Today's Income</div>
-                  <div id="incomeList" style="display:flex;flex-direction:column;gap:8px;"></div>
-                  <button class="add-btn" style="margin-top:10px;" onclick="addIncome()">+ Add income</button>
                 </div>
               </div>
             </div>
@@ -2393,141 +2756,175 @@
                 <div class="card-title" style="color:#8b7d3c;"><span class="icon"
                     style="background:var(--gold-light);">🎯</span> Savings Goals</div>
                 <div id="savingsGoals" style="display:flex;flex-direction:column;gap:14px;"></div>
-                <button class="add-btn" style="margin-top:12px;" onclick="addSavingsGoal()">+ Add savings goal</button>
+                <button class="add-btn" style="margin-top:12px;" onclick="addSavingsGoal(); saveMonthlyFinance();">+ Add
+                  savings goal</button>
               </div>
             </div>
 
-            <!-- Slide 3: Total Savings Accumulation + Summary -->
+            <!-- Slide 3: Savings Breakdown -->
             <div class="carousel-slide">
               <div class="card" style="grid-column:span 2;">
                 <div class="card-title" style="color:var(--accent);"><span class="icon"
-                    style="background:#e8eddf;">📊</span> Savings Summary</div>
-                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
-                  <div style="background:var(--accent-light);border-radius:12px;padding:14px;text-align:center;">
-                    <div
-                      style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:6px;">
-                      Total Saved</div>
-                    <div style="font-size:22px;font-weight:700;color:var(--accent-dark);" id="totalSaved">₱0.00</div>
-                  </div>
-                  <div style="background:var(--gold-light);border-radius:12px;padding:14px;text-align:center;">
-                    <div
-                      style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px;">
-                      Total Target</div>
-                    <div style="font-size:22px;font-weight:700;color:var(--gold);" id="totalTarget">₱0.00</div>
-                  </div>
-                  <div style="border-radius:12px;padding:14px;text-align:center;background:var(--olive-light);">
-                    <div
-                      style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--olive);margin-bottom:6px;">
-                      Overall Progress</div>
-                    <div style="font-size:22px;font-weight:700;color:var(--olive);" id="totalSavingsPct">0%</div>
-                  </div>
-                </div>
-                <div
-                  style="margin-top:12px;width:100%;height:10px;background:var(--border);border-radius:8px;overflow:hidden;">
-                  <div id="totalSavingsBar"
-                    style="height:100%;background:linear-gradient(90deg,var(--olive),var(--accent-dark));border-radius:8px;transition:width 0.4s ease;width:0%;">
-                  </div>
-                </div>
-              </div>
-            </div>
+                    style="background:var(--accent-light);">🏦</span> Savings Breakdown</div>
+                <p style="font-size:11px;color:var(--text-light);margin-bottom:12px;">Track where your savings are
+                  stored. Allocate to a goal to link it.</p>
 
-            <!-- Slide 4: Savings & Investments Breakdown -->
-            <div class="carousel-slide">
-              <div class="card" style="grid-column:span 2;">
-                <div class="card-title" style="color:var(--accent);"><span class="icon"
-                    style="background:var(--accent-light);">🏦</span> Savings & Investments Breakdown</div>
-                <p style="font-size:12px;color:var(--text-light);margin-bottom:14px;">Track where your money is saved
-                  and invested for an accurate total.</p>
-
-                <div style="display:flex;flex-direction:column;gap:10px;" id="savingsBreakdown">
-                  <!-- Bank Savings -->
-                  <div
-                    style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#eaeed8;border-radius:10px;">
-                    <span style="font-size:18px;">🏧</span>
-                    <span style="flex:1;font-size:13px;font-weight:600;color:var(--text);">Savings Account (Bank)</span>
-                    <span style="font-size:13px;color:var(--text-light);">₱</span>
+                <div style="display:flex;flex-direction:column;gap:8px;" id="savingsBreakdown">
+                  <div class="savings-bd-row"
+                    style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#eaeed8;border-radius:10px;">
+                    <span style="font-size:16px;">🏧</span>
+                    <span style="flex:1;font-size:12px;font-weight:600;color:var(--text);">Bank Savings</span>
+                    <span style="font-size:12px;color:var(--text-light);">₱</span>
                     <input type="number" class="savings-breakdown-input" data-type="bank" placeholder="0" step="0.01"
-                      style="width:100px;text-align:right;font-size:15px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent-dark);background:transparent;"
-                      oninput="recalcSavingsBreakdown(); scheduleSave();">
+                      style="width:90px;text-align:right;font-size:14px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent-dark);background:transparent;"
+                      oninput="recalcSavingsBreakdown(); saveMonthlyFinance();">
+                    <select class="savings-allocate" data-type="bank"
+                      onchange="recalcSavingsBreakdown(); saveMonthlyFinance();"
+                      style="font-size:10px;border:1px solid var(--border);border-radius:6px;padding:3px 4px;font-family:inherit;color:var(--text-light);background:white;max-width:80px;cursor:pointer;"></select>
                   </div>
-
-                  <!-- On Hand Cash -->
-                  <div
-                    style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f5f6f0;border-radius:10px;">
-                    <span style="font-size:18px;">💵</span>
-                    <span style="flex:1;font-size:13px;font-weight:600;color:var(--text);">Cash On Hand</span>
-                    <span style="font-size:13px;color:var(--text-light);">₱</span>
-                    <input type="number" class="savings-breakdown-input" data-type="cash" placeholder="0" step="0.01"
-                      style="width:100px;text-align:right;font-size:15px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent-dark);background:transparent;"
-                      oninput="recalcSavingsBreakdown(); scheduleSave();">
+                  <div class="savings-bd-row"
+                    style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f5f6f0;border-radius:10px;">
+                    <span style="font-size:16px;">💵</span>
+                    <span style="flex:1;font-size:12px;font-weight:600;color:var(--text);">Cash Savings</span>
+                    <span style="font-size:12px;color:var(--text-light);">₱</span>
+                    <input type="number" class="savings-breakdown-input" data-type="cashSavings" placeholder="0"
+                      step="0.01"
+                      style="width:90px;text-align:right;font-size:14px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent-dark);background:transparent;"
+                      oninput="recalcSavingsBreakdown(); saveMonthlyFinance();">
+                    <select class="savings-allocate" data-type="cashSavings"
+                      onchange="recalcSavingsBreakdown(); saveMonthlyFinance();"
+                      style="font-size:10px;border:1px solid var(--border);border-radius:6px;padding:3px 4px;font-family:inherit;color:var(--text-light);background:white;max-width:80px;cursor:pointer;"></select>
                   </div>
-
-                  <!-- Investments / Stocks -->
-                  <div
-                    style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#eaeed8;border-radius:10px;">
-                    <span style="font-size:18px;">📈</span>
-                    <span style="flex:1;font-size:13px;font-weight:600;color:var(--text);">Investments / Stocks</span>
-                    <span style="font-size:13px;color:var(--text-light);">₱</span>
-                    <input type="number" class="savings-breakdown-input" data-type="stocks" placeholder="0" step="0.01"
-                      style="width:100px;text-align:right;font-size:15px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent-dark);background:transparent;"
-                      oninput="recalcSavingsBreakdown(); scheduleSave();">
+                  <div class="savings-bd-row"
+                    style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#eaeed8;border-radius:10px;">
+                    <span style="font-size:16px;">📱</span>
+                    <span style="flex:1;font-size:12px;font-weight:600;color:var(--text);">Digital Wallet Savings</span>
+                    <span style="font-size:12px;color:var(--text-light);">₱</span>
+                    <input type="number" class="savings-breakdown-input" data-type="digitalSavings" placeholder="0"
+                      step="0.01"
+                      style="width:90px;text-align:right;font-size:14px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent-dark);background:transparent;"
+                      oninput="recalcSavingsBreakdown(); saveMonthlyFinance();">
+                    <select class="savings-allocate" data-type="digitalSavings"
+                      onchange="recalcSavingsBreakdown(); saveMonthlyFinance();"
+                      style="font-size:10px;border:1px solid var(--border);border-radius:6px;padding:3px 4px;font-family:inherit;color:var(--text-light);background:white;max-width:80px;cursor:pointer;"></select>
                   </div>
-
-                  <!-- Govt Bonds -->
-                  <div
-                    style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f5f6f0;border-radius:10px;">
-                    <span style="font-size:18px;">🏛️</span>
-                    <span style="flex:1;font-size:13px;font-weight:600;color:var(--text);">Govt Bonds (T-Bills, Retail
-                      Bonds)</span>
-                    <span style="font-size:13px;color:var(--text-light);">₱</span>
-                    <input type="number" class="savings-breakdown-input" data-type="bonds" placeholder="0" step="0.01"
-                      style="width:100px;text-align:right;font-size:15px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent-dark);background:transparent;"
-                      oninput="recalcSavingsBreakdown(); scheduleSave();">
-                  </div>
-
-                  <!-- Mutual Funds / UITF -->
-                  <div
-                    style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#eaeed8;border-radius:10px;">
-                    <span style="font-size:18px;">📊</span>
-                    <span style="flex:1;font-size:13px;font-weight:600;color:var(--text);">Mutual Funds / UITF</span>
-                    <span style="font-size:13px;color:var(--text-light);">₱</span>
-                    <input type="number" class="savings-breakdown-input" data-type="funds" placeholder="0" step="0.01"
-                      style="width:100px;text-align:right;font-size:15px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent-dark);background:transparent;"
-                      oninput="recalcSavingsBreakdown(); scheduleSave();">
-                  </div>
-
-                  <!-- Digital Wallets -->
-                  <div
-                    style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f5f6f0;border-radius:10px;">
-                    <span style="font-size:18px;">📱</span>
-                    <span style="flex:1;font-size:13px;font-weight:600;color:var(--text);">Digital Wallets (GCash, Maya,
-                      etc.)</span>
-                    <span style="font-size:13px;color:var(--text-light);">₱</span>
-                    <input type="number" class="savings-breakdown-input" data-type="digital" placeholder="0" step="0.01"
-                      style="width:100px;text-align:right;font-size:15px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent-dark);background:transparent;"
-                      oninput="recalcSavingsBreakdown(); scheduleSave();">
-                  </div>
-
-                  <!-- Other Platforms -->
-                  <div
-                    style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#eaeed8;border-radius:10px;">
-                    <span style="font-size:18px;">🔗</span>
-                    <span style="flex:1;font-size:13px;font-weight:600;color:var(--text);">Other Platforms</span>
-                    <span style="font-size:13px;color:var(--text-light);">₱</span>
-                    <input type="number" class="savings-breakdown-input" data-type="other" placeholder="0" step="0.01"
-                      style="width:100px;text-align:right;font-size:15px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent-dark);background:transparent;"
-                      oninput="recalcSavingsBreakdown(); scheduleSave();">
+                  <div class="savings-bd-row"
+                    style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f5f6f0;border-radius:10px;">
+                    <span style="font-size:16px;">🔗</span>
+                    <span style="flex:1;font-size:12px;font-weight:600;color:var(--text);">Other Savings</span>
+                    <span style="font-size:12px;color:var(--text-light);">₱</span>
+                    <input type="number" class="savings-breakdown-input" data-type="otherSavings" placeholder="0"
+                      step="0.01"
+                      style="width:90px;text-align:right;font-size:14px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent-dark);background:transparent;"
+                      oninput="recalcSavingsBreakdown(); saveMonthlyFinance();">
+                    <select class="savings-allocate" data-type="otherSavings"
+                      onchange="recalcSavingsBreakdown(); saveMonthlyFinance();"
+                      style="font-size:10px;border:1px solid var(--border);border-radius:6px;padding:3px 4px;font-family:inherit;color:var(--text-light);background:white;max-width:80px;cursor:pointer;"></select>
                   </div>
                 </div>
-
-                <!-- Grand Total -->
                 <div
-                  style="margin-top:16px;padding:16px;background:linear-gradient(135deg, var(--accent-light), var(--olive-light));border-radius:12px;text-align:center;">
+                  style="margin-top:12px;padding:12px;background:var(--accent-light);border-radius:10px;text-align:center;">
                   <div
-                    style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:6px;">
-                    Total Net Worth (Savings + Investments)</div>
-                  <div style="font-size:28px;font-weight:800;color:var(--accent-dark);" id="grandTotalSavings">₱0.00
+                    style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:4px;">
+                    Total Savings</div>
+                  <div style="font-size:22px;font-weight:800;color:var(--accent-dark);" id="grandTotalSavings">₱0.00
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 4: Investment Breakdown -->
+            <div class="carousel-slide">
+              <div class="card" style="grid-column:span 2;">
+                <div class="card-title" style="color:var(--gold);"><span class="icon"
+                    style="background:var(--gold-light);">📈</span> Investment Breakdown</div>
+                <p style="font-size:11px;color:var(--text-light);margin-bottom:12px;">Track your investment portfolio.
+                </p>
+
+                <div style="display:flex;flex-direction:column;gap:8px;" id="investmentBreakdown">
+                  <div
+                    style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#eaeed8;border-radius:10px;flex-wrap:wrap;">
+                    <span style="font-size:16px;">📈</span>
+                    <span style="flex:1;font-size:12px;font-weight:600;color:var(--text);">Stocks</span>
+                    <span style="font-size:12px;color:var(--text-light);">₱</span>
+                    <input type="number" class="investment-breakdown-input" data-type="stocks" placeholder="0"
+                      step="0.01"
+                      style="width:90px;text-align:right;font-size:14px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--gold);background:transparent;"
+                      oninput="recalcInvestments(); saveMonthlyFinance();">
+                    <select class="invest-allocate" data-type="stocks"
+                      onchange="recalcInvestments(); saveMonthlyFinance();"
+                      style="font-size:10px;border:1px solid var(--border);border-radius:6px;padding:3px 4px;font-family:inherit;color:var(--text-light);background:white;max-width:80px;cursor:pointer;"></select>
+                  </div>
+                  <div
+                    style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f5f6f0;border-radius:10px;flex-wrap:wrap;">
+                    <span style="font-size:16px;">🏛️</span>
+                    <span style="flex:1;font-size:12px;font-weight:600;color:var(--text);">Govt Bonds (T-Bills, Retail
+                      Bonds)</span>
+                    <span style="font-size:12px;color:var(--text-light);">₱</span>
+                    <input type="number" class="investment-breakdown-input" data-type="bonds" placeholder="0"
+                      step="0.01"
+                      style="width:90px;text-align:right;font-size:14px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--gold);background:transparent;"
+                      oninput="recalcInvestments(); saveMonthlyFinance();">
+                    <select class="invest-allocate" data-type="bonds"
+                      onchange="recalcInvestments(); saveMonthlyFinance();"
+                      style="font-size:10px;border:1px solid var(--border);border-radius:6px;padding:3px 4px;font-family:inherit;color:var(--text-light);background:white;max-width:80px;cursor:pointer;"></select>
+                  </div>
+                  <div
+                    style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#eaeed8;border-radius:10px;flex-wrap:wrap;">
+                    <span style="font-size:16px;">📊</span>
+                    <span style="flex:1;font-size:12px;font-weight:600;color:var(--text);">Mutual Funds / UITF</span>
+                    <span style="font-size:12px;color:var(--text-light);">₱</span>
+                    <input type="number" class="investment-breakdown-input" data-type="funds" placeholder="0"
+                      step="0.01"
+                      style="width:90px;text-align:right;font-size:14px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--gold);background:transparent;"
+                      oninput="recalcInvestments(); saveMonthlyFinance();">
+                    <select class="invest-allocate" data-type="funds"
+                      onchange="recalcInvestments(); saveMonthlyFinance();"
+                      style="font-size:10px;border:1px solid var(--border);border-radius:6px;padding:3px 4px;font-family:inherit;color:var(--text-light);background:white;max-width:80px;cursor:pointer;"></select>
+                  </div>
+                  <div
+                    style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f5f6f0;border-radius:10px;flex-wrap:wrap;">
+                    <span style="font-size:16px;">🪙</span>
+                    <span style="flex:1;font-size:12px;font-weight:600;color:var(--text);">Crypto / Digital
+                      Assets</span>
+                    <span style="font-size:12px;color:var(--text-light);">₱</span>
+                    <input type="number" class="investment-breakdown-input" data-type="crypto" placeholder="0"
+                      step="0.01"
+                      style="width:90px;text-align:right;font-size:14px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--gold);background:transparent;"
+                      oninput="recalcInvestments(); saveMonthlyFinance();">
+                    <select class="invest-allocate" data-type="crypto"
+                      onchange="recalcInvestments(); saveMonthlyFinance();"
+                      style="font-size:10px;border:1px solid var(--border);border-radius:6px;padding:3px 4px;font-family:inherit;color:var(--text-light);background:white;max-width:80px;cursor:pointer;"></select>
+                  </div>
+                  <div
+                    style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#eaeed8;border-radius:10px;flex-wrap:wrap;">
+                    <span style="font-size:16px;">🔗</span>
+                    <span style="flex:1;font-size:12px;font-weight:600;color:var(--text);">Other Investments</span>
+                    <span style="font-size:12px;color:var(--text-light);">₱</span>
+                    <input type="number" class="investment-breakdown-input" data-type="otherInvest" placeholder="0"
+                      step="0.01"
+                      style="width:90px;text-align:right;font-size:14px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--gold);background:transparent;"
+                      oninput="recalcInvestments(); saveMonthlyFinance();">
+                    <select class="invest-allocate" data-type="otherInvest"
+                      onchange="recalcInvestments(); saveMonthlyFinance();"
+                      style="font-size:10px;border:1px solid var(--border);border-radius:6px;padding:3px 4px;font-family:inherit;color:var(--text-light);background:white;max-width:80px;cursor:pointer;"></select>
+                  </div>
+                </div>
+                <div
+                  style="margin-top:12px;padding:12px;background:var(--gold-light);border-radius:10px;text-align:center;">
+                  <div
+                    style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:4px;">
+                    Total Investments</div>
+                  <div style="font-size:22px;font-weight:800;color:var(--gold);" id="grandTotalInvestments">₱0.00</div>
+                </div>
+
+                <!-- Net Worth -->
+                <div
+                  style="margin-top:12px;padding:14px;background:linear-gradient(135deg, var(--accent-light), var(--gold-light));border-radius:12px;text-align:center;">
+                  <div
+                    style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:4px;">
+                    Total Net Worth (Savings + Investments)</div>
+                  <div style="font-size:24px;font-weight:800;color:var(--accent-dark);" id="grandNetWorth">₱0.00</div>
                 </div>
               </div>
             </div>
@@ -2543,7 +2940,6 @@
             </div>
 
           </div><!-- /carousel-track -->
-          <div class="carousel-dots"></div>
         </div><!-- /card-carousel -->
       </div><!-- /tab-finance -->
 
@@ -2676,6 +3072,15 @@
         emoji: item.querySelector('span') ? item.querySelector('span').textContent : ''
       }));
 
+      // Gym Program — save all day types independently
+      const activeGymBtn = document.querySelector('.gym-day-btn.gym-day-active');
+      data.gymDayType = activeGymBtn ? activeGymBtn.dataset.day : '';
+      const allGym = (typeof collectAllGymData === 'function') ? collectAllGymData() : { exercises: {}, notes: {} };
+      data.gymAllExercises = allGym.exercises;
+      data.gymAllNotes = allGym.notes;
+      // Keep flat gymNotes for backward compat / hasContent check
+      data.gymNotes = document.getElementById('gymNotes').value;
+
       // Meals
       ['mealBreakfast', 'mealLunch', 'mealDinner', 'mealSnacks'].forEach(id => {
         data[id] = Array.from(document.getElementById(id).children).map(row => ({
@@ -2686,29 +3091,12 @@
       });
       data.mealNotes = document.getElementById('mealNotes').value;
 
-      // Finance
-      data.dailyBudget = document.getElementById('dailyBudget').value;
+      // Finance — only expenses are per-day; savings/investments/funds are monthly
       data.expenses = Array.from(document.getElementById('expenseList').children).map(row => ({
         category: row.querySelector('select') ? row.querySelector('select').value : '',
-        desc: row.querySelector('input[type="text"]') ? row.querySelector('input[type="text"]').value : '',
         amount: row.querySelector('input[type="number"]') ? row.querySelector('input[type="number"]').value : ''
-      }));
-      data.income = Array.from(document.getElementById('incomeList').children).map(row => ({
-        source: row.querySelector('input[type="text"]') ? row.querySelector('input[type="text"]').value : '',
-        amount: row.querySelector('input[type="number"]') ? row.querySelector('input[type="number"]').value : ''
-      }));
-      data.savingsGoals = Array.from(document.getElementById('savingsGoals').children).map(row => ({
-        name: row.querySelector('input[type="text"]') ? row.querySelector('input[type="text"]').value : '',
-        current: row.querySelector('.savings-current') ? row.querySelector('.savings-current').value : '',
-        target: row.querySelector('.savings-target') ? row.querySelector('.savings-target').value : ''
       }));
       data.financeNotes = document.getElementById('financeNotes').value;
-
-      // Savings breakdown
-      data.savingsBreakdown = {};
-      document.querySelectorAll('.savings-breakdown-input').forEach(inp => {
-        data.savingsBreakdown[inp.dataset.type] = inp.value;
-      });
 
       return data;
     }
@@ -2770,6 +3158,7 @@
       // Weight
       document.getElementById('weightInput').value = data.weight || '';
       if (data.weightUnit) document.getElementById('weightUnit').value = data.weightUnit;
+      if (typeof renderWeightProgress === 'function') renderWeightProgress();
 
       // Cycle flow
       document.querySelectorAll('.flow-btn').forEach(b => {
@@ -2809,6 +3198,58 @@
         });
       }
 
+      // Gym Program — restore all day types into cache, display active type
+      if (typeof gymDayExercisesCache !== 'undefined') {
+        gymDayExercisesCache = {};
+        gymNotesCache = {};
+      }
+      // Populate cache from saved per-type data (new format)
+      if (data.gymAllExercises && typeof data.gymAllExercises === 'object') {
+        Object.keys(data.gymAllExercises).forEach(t => {
+          gymDayExercisesCache[t] = data.gymAllExercises[t];
+        });
+      }
+      if (data.gymAllNotes && typeof data.gymAllNotes === 'object') {
+        Object.keys(data.gymAllNotes).forEach(t => {
+          gymNotesCache[t] = data.gymAllNotes[t];
+        });
+      }
+      // Backward compat: if old flat gymExercises array exists and no new format
+      if (!data.gymAllExercises && data.gymExercises && data.gymExercises.length > 0 && data.gymDayType) {
+        gymDayExercisesCache[data.gymDayType] = data.gymExercises;
+        if (data.gymNotes) gymNotesCache[data.gymDayType] = data.gymNotes;
+      }
+
+      // Set active button
+      document.querySelectorAll('.gym-day-btn').forEach(b => {
+        b.classList.remove('gym-day-active');
+        b.style.background = 'white'; b.style.color = '#888'; b.style.borderColor = '#b8c8a4';
+        if (data.gymDayType && b.dataset.day === data.gymDayType) {
+          b.classList.add('gym-day-active');
+          b.style.background = '#5e7550'; b.style.color = 'white'; b.style.borderColor = '#5e7550';
+        }
+      });
+      const gymLabel = document.getElementById('gymDayLabel');
+      if (data.gymDayType) {
+        gymLabel.textContent = gymDayLabels[data.gymDayType] || '';
+        gymLabel.style.display = 'inline-block';
+      } else {
+        gymLabel.textContent = ''; gymLabel.style.display = 'none';
+      }
+      // Display the active day type's exercises
+      const gymList = document.getElementById('gymExerciseList');
+      gymList.innerHTML = '';
+      if (data.gymDayType && typeof loadGymTypeExercises === 'function') {
+        loadGymTypeExercises(data.gymDayType);
+      } else if (data.gymDayType) {
+        // Fallback if function not yet defined
+        const exercises = gymDayExercisesCache[data.gymDayType] || [];
+        exercises.forEach(ex => addGymExercise(ex));
+        document.getElementById('gymNotes').value = gymNotesCache[data.gymDayType] || data.gymNotes || '';
+      } else {
+        document.getElementById('gymNotes').value = '';
+      }
+
       // Meals
       ['mealBreakfast', 'mealLunch', 'mealDinner', 'mealSnacks'].forEach(id => {
         const list = document.getElementById(id);
@@ -2822,32 +3263,20 @@
       });
       if (data.mealNotes !== undefined) document.getElementById('mealNotes').value = data.mealNotes || '';
 
-      // Finance
-      if (data.dailyBudget !== undefined) document.getElementById('dailyBudget').value = data.dailyBudget || '';
+      // Finance — load monthly data (funds, goals, breakdowns, allocations)
+      loadMonthlyFinance();
+      // Backward compat: migrate old per-day data into monthly if monthly is empty
+      migratePerDayFinanceToMonthly(data);
+      // Expenses are per-day
       if (data.expenses) {
         document.getElementById('expenseList').innerHTML = '';
         data.expenses.forEach(e => addExpense(e));
         if (data.expenses.length === 0) { addExpense(); addExpense(); addExpense(); }
       }
-      if (data.income) {
-        document.getElementById('incomeList').innerHTML = '';
-        data.income.forEach(inc => addIncome(inc));
-        if (data.income.length === 0) addIncome();
-      }
-      if (data.savingsGoals) {
-        document.getElementById('savingsGoals').innerHTML = '';
-        data.savingsGoals.forEach(g => addSavingsGoal(g));
-        if (data.savingsGoals.length === 0) addSavingsGoal();
-      }
       if (data.financeNotes !== undefined) document.getElementById('financeNotes').value = data.financeNotes || '';
-      // Savings breakdown
-      if (data.savingsBreakdown) {
-        document.querySelectorAll('.savings-breakdown-input').forEach(inp => {
-          inp.value = data.savingsBreakdown[inp.dataset.type] || '';
-        });
-      }
       recalcFinance();
       recalcSavingsBreakdown();
+      recalcInvestments();
 
       updateProgress();
     }
@@ -2871,6 +3300,7 @@
       document.querySelectorAll('#waterGlasses2 .water-glass').forEach(g => g.classList.remove('filled'));
       document.getElementById('waterCount').textContent = '0';
       document.getElementById('weightInput').value = '';
+      if (typeof renderWeightProgress === 'function') renderWeightProgress();
       document.querySelectorAll('.flow-btn').forEach(b => { b.style.background = 'white'; b.style.color = '#888'; b.style.borderColor = '#b8c8a4'; });
       document.getElementById('cycleDay').value = '';
       document.getElementById('cycleLength').value = '28';
@@ -2886,18 +3316,21 @@
         for (let i = 0; i < (defaults[id] || 1); i++) addMealItem(id);
       });
       document.getElementById('mealNotes').value = '';
-      // Finance
-      document.getElementById('dailyBudget').value = '';
+      // Gym — reset cache and UI
+      if (typeof gymDayExercisesCache !== 'undefined') { gymDayExercisesCache = {}; gymNotesCache = {}; }
+      document.querySelectorAll('.gym-day-btn').forEach(b => { b.classList.remove('gym-day-active'); b.style.background = 'white'; b.style.color = '#888'; b.style.borderColor = '#b8c8a4'; });
+      document.getElementById('gymExerciseList').innerHTML = '';
+      document.getElementById('gymDayLabel').textContent = '';
+      document.getElementById('gymDayLabel').style.display = 'none';
+      document.getElementById('gymNotes').value = '';
+      // Finance — expenses reset per day, everything else from monthly storage
       document.getElementById('expenseList').innerHTML = '';
       addExpense(); addExpense(); addExpense();
-      document.getElementById('incomeList').innerHTML = '';
-      addIncome();
-      document.getElementById('savingsGoals').innerHTML = '';
-      addSavingsGoal();
       document.getElementById('financeNotes').value = '';
-      document.querySelectorAll('.savings-breakdown-input').forEach(inp => inp.value = '');
+      loadMonthlyFinance();
       recalcFinance();
       recalcSavingsBreakdown();
+      recalcInvestments();
       // Carry forward incomplete learning items
       loadLearningMaster();
       updateProgress();
@@ -2917,14 +3350,12 @@
         data.symptoms.length > 0 ||
         data.learning.some(l => l.text) ||
         ['workTodos', 'healthTodos', 'personalTodos'].some(id => data[id].some(t => t.text)) ||
+        data.gymDayType || data.gymNotes ||
+        (data.gymAllExercises && Object.values(data.gymAllExercises).some(arr => arr && arr.some(e => e.name))) ||
         data.mealNotes ||
         ['mealBreakfast', 'mealLunch', 'mealDinner', 'mealSnacks'].some(id => data[id] && data[id].some(m => m.food)) ||
-        data.dailyBudget ||
-        (data.expenses && data.expenses.some(e => e.desc || e.amount)) ||
-        (data.income && data.income.some(i => i.source || i.amount)) ||
-        (data.savingsGoals && data.savingsGoals.some(g => g.name || g.current || g.target)) ||
-        data.financeNotes ||
-        (data.savingsBreakdown && Object.values(data.savingsBreakdown).some(v => v));
+        (data.expenses && data.expenses.some(e => e.amount)) ||
+        data.financeNotes;
 
       if (hasContent) {
         localStorage.setItem(key, JSON.stringify(data));
@@ -2991,6 +3422,8 @@
       // Clear and load
       clearUI();
       loadDayData();
+      // Refresh weekly focus for the new date context
+      if (typeof loadGymWeeklyFocus === 'function') loadGymWeeklyFocus();
     }
 
     // Export current day as JSON file download
@@ -3672,6 +4105,451 @@
       }
     });
 
+    // ========== GYM PROGRAM ==========
+    const gymPresets = {
+      upper: [
+        { name: 'Bench Press', sets: '4', reps: '8-10' },
+        { name: 'Overhead Press', sets: '3', reps: '8-10' },
+        { name: 'Bent-Over Rows', sets: '4', reps: '10' },
+        { name: 'Lat Pulldowns', sets: '3', reps: '10-12' },
+        { name: 'Dumbbell Curls', sets: '3', reps: '12' },
+        { name: 'Tricep Pushdowns', sets: '3', reps: '12' },
+        { name: 'Lateral Raises', sets: '3', reps: '15' },
+      ],
+      lower: [
+        { name: 'Barbell Squats', sets: '4', reps: '8-10' },
+        { name: 'Romanian Deadlifts', sets: '3', reps: '10' },
+        { name: 'Leg Press', sets: '3', reps: '12' },
+        { name: 'Walking Lunges', sets: '3', reps: '12/leg' },
+        { name: 'Leg Curls', sets: '3', reps: '12' },
+        { name: 'Calf Raises', sets: '4', reps: '15' },
+        { name: 'Hip Thrusts', sets: '3', reps: '12' },
+      ],
+      cardio: [
+        { name: 'Treadmill Run', sets: '—', reps: '20 min' },
+        { name: 'Jump Rope', sets: '3', reps: '3 min' },
+        { name: 'Cycling / Bike', sets: '—', reps: '15 min' },
+        { name: 'Rowing Machine', sets: '—', reps: '10 min' },
+        { name: 'Burpees', sets: '3', reps: '15' },
+        { name: 'Mountain Climbers', sets: '3', reps: '30 sec' },
+      ],
+      full: [
+        { name: 'Deadlifts', sets: '4', reps: '6-8' },
+        { name: 'Push-Ups', sets: '3', reps: '15' },
+        { name: 'Pull-Ups / Assisted', sets: '3', reps: '8-10' },
+        { name: 'Goblet Squats', sets: '3', reps: '12' },
+        { name: 'Dumbbell Rows', sets: '3', reps: '10/arm' },
+        { name: 'Plank Hold', sets: '3', reps: '45 sec' },
+        { name: 'Box Jumps', sets: '3', reps: '10' },
+      ],
+      rest: [
+        { name: 'Foam Rolling', sets: '—', reps: '10 min' },
+        { name: 'Stretching Routine', sets: '—', reps: '15 min' },
+        { name: 'Light Walking', sets: '—', reps: '20 min' },
+        { name: 'Yoga Flow', sets: '—', reps: '15 min' },
+      ]
+    };
+
+    const gymDayLabels = {
+      upper: '💪 Upper Body Day',
+      lower: '🦵 Lower Body Day',
+      cardio: '🫀 Cardio Day',
+      full: '🔥 Full Body Day',
+      rest: '🧘 Rest / Recovery'
+    };
+
+    // ========== WEIGHT PROGRESS TRACKER ==========
+    const WEIGHT_HISTORY_KEY = 'dailyPlanner_weight_history';
+
+    function getWeightHistory() {
+      try { return JSON.parse(localStorage.getItem(WEIGHT_HISTORY_KEY)) || {}; }
+      catch (e) { return {}; }
+    }
+
+    function saveWeightEntry() {
+      const w = parseFloat(document.getElementById('weightInput').value);
+      const unit = document.getElementById('weightUnit').value;
+      if (!w || isNaN(w)) return;
+      const history = getWeightHistory();
+      history[getDateKey()] = { weight: w, unit: unit };
+      localStorage.setItem(WEIGHT_HISTORY_KEY, JSON.stringify(history));
+      renderWeightProgress();
+    }
+
+    function deleteWeightEntry(dateKey) {
+      const history = getWeightHistory();
+      if (!history[dateKey]) return;
+      delete history[dateKey];
+      localStorage.setItem(WEIGHT_HISTORY_KEY, JSON.stringify(history));
+      // If deleting today's entry, also clear the input
+      if (dateKey === getDateKey()) {
+        document.getElementById('weightInput').value = '';
+        scheduleSave();
+      }
+      renderWeightProgress();
+    }
+
+    function renderWeightProgress() {
+      const history = getWeightHistory();
+      const dates = Object.keys(history).sort();
+      const progressDiv = document.getElementById('weightProgress');
+      const deltaDiv = document.getElementById('weightDelta');
+      const prevLabel = document.getElementById('weightPrevLabel');
+      const historyDiv = document.getElementById('weightHistory');
+
+      const todayKey = getDateKey();
+      const todayEntry = history[todayKey];
+      const currentVal = todayEntry ? todayEntry.weight : parseFloat(document.getElementById('weightInput').value);
+
+      // Find previous entry (most recent before today)
+      const prevDates = dates.filter(d => d < todayKey && history[d].weight);
+      const prevEntry = prevDates.length ? history[prevDates[prevDates.length - 1]] : null;
+
+      // Show delta indicator
+      if (currentVal && prevEntry) {
+        const diff = currentVal - prevEntry.weight;
+        const unit = todayEntry ? todayEntry.unit : document.getElementById('weightUnit').value;
+        progressDiv.style.display = 'block';
+
+        if (Math.abs(diff) < 0.01) {
+          deltaDiv.innerHTML = '<span style="color:var(--text-light);">→ No change</span>';
+        } else if (diff < 0) {
+          deltaDiv.innerHTML = '<span style="color:#3d8b5e;">▼ ' + Math.abs(diff).toFixed(1) + ' ' + unit + '</span>';
+        } else {
+          deltaDiv.innerHTML = '<span style="color:#c0392b;">▲ +' + diff.toFixed(1) + ' ' + unit + '</span>';
+        }
+        prevLabel.textContent = 'vs ' + prevDates[prevDates.length - 1] + ' (' + prevEntry.weight + ' ' + prevEntry.unit + ')';
+      } else if (currentVal && !prevEntry) {
+        progressDiv.style.display = 'block';
+        deltaDiv.innerHTML = '<span style="color:var(--text-light);font-size:11px;">First entry — keep logging!</span>';
+        prevLabel.textContent = '';
+      } else {
+        progressDiv.style.display = 'none';
+      }
+
+      // Render mini bar chart of last 7 entries
+      historyDiv.innerHTML = '';
+      const recent = dates.filter(d => history[d].weight).slice(-7);
+      if (recent.length >= 2) {
+        const weights = recent.map(d => history[d].weight);
+        const minW = Math.min(...weights) - 0.5;
+        const maxW = Math.max(...weights) + 0.5;
+        const range = maxW - minW || 1;
+
+        recent.forEach((d, i) => {
+          const val = history[d].weight;
+          const h = Math.max(6, ((val - minW) / range) * 32);
+          const isToday = d === todayKey;
+          let color = 'var(--border)';
+          if (i > 0) {
+            const prevVal = weights[i - 1];
+            if (val < prevVal) color = '#3d8b5e';
+            else if (val > prevVal) color = '#c0392b';
+            else color = 'var(--text-light)';
+          }
+          const bar = document.createElement('div');
+          bar.title = d + ': ' + val;
+          bar.style.cssText = 'width:' + (isToday ? '10px' : '7px') + ';height:' + h + 'px;background:' + color + ';border-radius:3px;transition:height 0.3s;' + (isToday ? 'box-shadow:0 0 0 2px ' + color + '33;' : 'opacity:0.7;');
+          historyDiv.appendChild(bar);
+        });
+      }
+
+      // Render weight history log (most recent first, up to 14 entries)
+      const logContainer = document.getElementById('weightHistoryLog');
+      const rowsContainer = document.getElementById('weightHistoryRows');
+      const allEntries = dates.filter(d => history[d].weight);
+      if (allEntries.length > 0) {
+        logContainer.style.display = 'block';
+        rowsContainer.innerHTML = '';
+        const showEntries = allEntries.slice(-14).reverse();
+        showEntries.forEach((d, i) => {
+          const entry = history[d];
+          const revIdx = allEntries.indexOf(d);
+          const prevDate = revIdx > 0 ? allEntries[revIdx - 1] : null;
+          const prevW = prevDate ? history[prevDate].weight : null;
+          const diff = prevW !== null ? entry.weight - prevW : null;
+
+          // Format date nicely
+          const parts = d.split('-');
+          const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+          const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+          const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          const niceDate = dayNames[dateObj.getDay()] + ', ' + monthNames[dateObj.getMonth()] + ' ' + dateObj.getDate();
+          const isToday2 = d === todayKey;
+
+          let diffHtml = '';
+          if (diff !== null && Math.abs(diff) >= 0.01) {
+            if (diff < 0) {
+              diffHtml = '<span style="color:#3d8b5e;font-size:10px;font-weight:600;">▼ ' + Math.abs(diff).toFixed(1) + '</span>';
+            } else {
+              diffHtml = '<span style="color:#c0392b;font-size:10px;font-weight:600;">▲ +' + diff.toFixed(1) + '</span>';
+            }
+          } else if (diff !== null) {
+            diffHtml = '<span style="color:var(--text-light);font-size:10px;">—</span>';
+          }
+
+          const row = document.createElement('div');
+          row.style.cssText = 'display:flex;align-items:center;gap:4px;padding:5px 8px;border-radius:8px;font-size:12px;' + (isToday2 ? 'background:var(--accent-light);font-weight:600;' : 'background:#f8f8f5;');
+          row.innerHTML =
+            '<span style="color:' + (isToday2 ? 'var(--accent)' : 'var(--text-light)') + ';min-width:90px;flex:1;">' + (isToday2 ? '● Today' : niceDate) + '</span>' +
+            '<span style="font-weight:700;color:var(--text);">' + entry.weight + ' <span style="font-weight:400;font-size:10px;color:var(--text-light);">' + entry.unit + '</span></span>' +
+            '<span style="min-width:40px;text-align:right;">' + diffHtml + '</span>' +
+            '<button onclick="deleteWeightEntry(\'' + d + '\')" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:14px;padding:0 2px;line-height:1;transition:color 0.2s;" onmouseenter="this.style.color=\'#c0392b\'" onmouseleave="this.style.color=\'#ccc\'" title="Delete this entry">×</button>';
+          rowsContainer.appendChild(row);
+        });
+      } else {
+        logContainer.style.display = 'none';
+      }
+    }
+
+    // Hook into weight input
+    document.getElementById('weightInput').addEventListener('input', function () {
+      saveWeightEntry();
+      scheduleSave();
+    });
+    document.getElementById('weightUnit').addEventListener('change', function () {
+      saveWeightEntry();
+      scheduleSave();
+    });
+
+    const GYM_ROUTINE_KEY = 'dailyPlanner_gym_routines';
+
+    // In-memory cache: stores exercises for each day type independently within the current day
+    // Structure: { upper: [{name,sets,reps,pr,done},...], lower: [...], ... }
+    let gymDayExercisesCache = {};
+    let gymNotesCache = {};
+
+    function getGymRoutines() {
+      try { return JSON.parse(localStorage.getItem(GYM_ROUTINE_KEY)) || {}; }
+      catch (e) { return {}; }
+    }
+
+    function saveGymRoutine() {
+      const activeBtn = document.querySelector('.gym-day-btn.gym-day-active');
+      if (!activeBtn) { showToast('⚠️ Pick a day type first', ''); return; }
+      const dayType = activeBtn.dataset.day;
+      const exercises = collectGymExercises();
+      if (!exercises.length || !exercises.some(e => e.name)) {
+        showToast('⚠️ Add exercises first', ''); return;
+      }
+      const routines = getGymRoutines();
+      routines[dayType] = exercises.map(e => ({ name: e.name, sets: e.sets, reps: e.reps, pr: e.pr }));
+      localStorage.setItem(GYM_ROUTINE_KEY, JSON.stringify(routines));
+      // Also update the cache so it reflects the save
+      gymDayExercisesCache[dayType] = exercises;
+      showToast('✅ Routine saved for ' + (gymDayLabels[dayType] || dayType), '');
+    }
+
+    function collectGymExercises() {
+      return Array.from(document.querySelectorAll('#gymExerciseList .gym-exercise-row')).map(row => ({
+        name: row.querySelector('.exercise-name') ? row.querySelector('.exercise-name').value : '',
+        sets: row.querySelectorAll('.exercise-detail')[0] ? row.querySelectorAll('.exercise-detail')[0].value : '',
+        reps: row.querySelectorAll('.exercise-detail')[1] ? row.querySelectorAll('.exercise-detail')[1].value : '',
+        pr: row.querySelector('.exercise-pr') ? row.querySelector('.exercise-pr').value : '',
+        done: row.querySelector('input[type="checkbox"]') ? row.querySelector('input[type="checkbox"]').checked : false
+      }));
+    }
+
+    // Snapshot the currently visible exercise list into the cache before switching
+    function snapshotCurrentGymType() {
+      const activeBtn = document.querySelector('.gym-day-btn.gym-day-active');
+      if (activeBtn) {
+        const prevType = activeBtn.dataset.day;
+        gymDayExercisesCache[prevType] = collectGymExercises();
+        gymNotesCache[prevType] = document.getElementById('gymNotes').value;
+      }
+    }
+
+    // Collect ALL gym data across all day types for saving
+    function collectAllGymData() {
+      // Snapshot the currently visible type first
+      snapshotCurrentGymType();
+      return {
+        exercises: Object.assign({}, gymDayExercisesCache),
+        notes: Object.assign({}, gymNotesCache)
+      };
+    }
+
+    // Load exercises for a specific day type into the visible list
+    function loadGymTypeExercises(dayType) {
+      const list = document.getElementById('gymExerciseList');
+      list.innerHTML = '';
+      // Priority: cache for this day > saved routine > presets
+      let exercises = gymDayExercisesCache[dayType];
+      if (!exercises || !exercises.length || !exercises.some(e => e.name)) {
+        const routines = getGymRoutines();
+        exercises = (routines[dayType] && routines[dayType].length) ? routines[dayType] : (gymPresets[dayType] || []);
+        // Store in cache so subsequent switches don't re-fetch
+        gymDayExercisesCache[dayType] = exercises.map(e => ({ name: e.name, sets: e.sets, reps: e.reps, pr: e.pr || '', done: false }));
+      }
+      exercises.forEach(ex => addGymExercise(ex));
+      // Restore notes for this type
+      document.getElementById('gymNotes').value = gymNotesCache[dayType] || '';
+    }
+
+    function selectGymDay(btn) {
+      // Snapshot current type's exercises before switching
+      snapshotCurrentGymType();
+
+      // Toggle active styling
+      document.querySelectorAll('.gym-day-btn').forEach(b => {
+        b.classList.remove('gym-day-active');
+        b.style.background = 'white'; b.style.color = '#888'; b.style.borderColor = '#b8c8a4';
+      });
+      btn.classList.add('gym-day-active');
+      btn.style.background = '#5e7550'; btn.style.color = 'white'; btn.style.borderColor = '#5e7550';
+
+      const dayType = btn.dataset.day;
+      const label = document.getElementById('gymDayLabel');
+      label.textContent = gymDayLabels[dayType] || '';
+      label.style.display = 'inline-block';
+
+      // Load this day type's own exercise list
+      loadGymTypeExercises(dayType);
+
+      scheduleSave();
+    }
+
+    function createGymExerciseRow(data) {
+      const row = document.createElement('div');
+      row.className = 'gym-exercise-row';
+      const done = (data && data.done) ? 'checked' : '';
+      row.innerHTML =
+        '<input type="checkbox" ' + done + ' onchange="scheduleSave()">' +
+        '<input type="text" class="exercise-name" value="' + ((data && data.name) || '').replace(/"/g, '&quot;') + '" placeholder="Exercise name..." oninput="scheduleSave()">' +
+        '<div style="display:flex;flex-direction:column;align-items:center;"><span class="exercise-detail-label">Sets</span><input type="text" class="exercise-detail" value="' + ((data && data.sets) || '') + '" placeholder="—" oninput="scheduleSave()"></div>' +
+        '<div style="display:flex;flex-direction:column;align-items:center;"><span class="exercise-detail-label">Reps</span><input type="text" class="exercise-detail" value="' + ((data && data.reps) || '') + '" placeholder="—" oninput="scheduleSave()"></div>' +
+        '<div style="display:flex;flex-direction:column;align-items:center;"><span class="exercise-detail-label">PR</span><input type="text" class="exercise-detail exercise-pr" value="' + ((data && data.pr) || '').replace(/"/g, '&quot;') + '" placeholder="—" oninput="scheduleSave()" style="color:var(--accent);font-weight:600;"></div>' +
+        '<button onclick="this.parentElement.remove(); scheduleSave();" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:0 4px;">×</button>';
+      return row;
+    }
+
+    function addGymExercise(data) {
+      const list = document.getElementById('gymExerciseList');
+      list.appendChild(createGymExerciseRow(data));
+      if (!data) list.lastChild.querySelector('.exercise-name').focus();
+    }
+
+    // ========== GYM WEEKLY FOCUS TRACKER ==========
+    const GYM_WEEK_KEY = 'dailyPlanner_gym_weekly';
+
+    // Get the Monday date string for a given date (week identifier)
+    function getWeekMonday(date) {
+      const d = new Date(date);
+      const day = d.getDay(); // 0=Sun, 1=Mon...
+      const diff = day === 0 ? -6 : 1 - day; // adjust to Monday
+      d.setDate(d.getDate() + diff);
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+
+    function loadGymWeeklyFocus() {
+      const data = getGymWeekData();
+      const selects = document.querySelectorAll('.gym-week-select');
+      const cols = document.querySelectorAll('.gym-week-col');
+      const todayDow = currentDate.getDay(); // 0=Sun
+
+      cols.forEach(col => {
+        col.classList.remove('is-today', 'day-done');
+        const dow = parseInt(col.dataset.dow);
+        if (dow === todayDow) col.classList.add('is-today');
+      });
+
+      // Map: dow index → select element
+      const dowMap = { 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri', 6: 'sat', 0: 'sun' };
+      selects.forEach((sel, i) => {
+        const col = sel.closest('.gym-week-col');
+        const dow = col.dataset.dow;
+        const dayKey = dowMap[dow] || '';
+        sel.value = (data.schedule && data.schedule[dayKey]) || '';
+      });
+
+      updateGymWeekLabel();
+      highlightGymTodaySuggestion();
+    }
+
+    function getGymWeekData() {
+      try {
+        const all = JSON.parse(localStorage.getItem(GYM_WEEK_KEY)) || {};
+        const weekId = getWeekMonday(currentDate);
+        // Auto-reset: if the stored week doesn't match current week, start fresh
+        // but carry forward the schedule template from last week
+        if (!all[weekId]) {
+          // Find the most recent week with data to use as template
+          const weeks = Object.keys(all).sort();
+          const lastWeek = weeks.length ? all[weeks[weeks.length - 1]] : null;
+          all[weekId] = {
+            schedule: lastWeek ? Object.assign({}, lastWeek.schedule) : {},
+            completed: {}
+          };
+          localStorage.setItem(GYM_WEEK_KEY, JSON.stringify(all));
+        }
+        return all[weekId];
+      } catch (e) { return { schedule: {}, completed: {} }; }
+    }
+
+    function saveGymWeekData(data) {
+      try {
+        const all = JSON.parse(localStorage.getItem(GYM_WEEK_KEY)) || {};
+        const weekId = getWeekMonday(currentDate);
+        all[weekId] = data;
+        localStorage.setItem(GYM_WEEK_KEY, JSON.stringify(all));
+      } catch (e) { }
+    }
+
+    function onGymWeekChange() {
+      const data = getGymWeekData();
+      const dowMap = { 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri', 6: 'sat', 0: 'sun' };
+      data.schedule = {};
+      document.querySelectorAll('.gym-week-col').forEach(col => {
+        const dow = col.dataset.dow;
+        const dayKey = dowMap[dow] || '';
+        const sel = col.querySelector('.gym-week-select');
+        if (sel.value) data.schedule[dayKey] = sel.value;
+      });
+      saveGymWeekData(data);
+      updateGymWeekLabel();
+      highlightGymTodaySuggestion();
+    }
+
+    function updateGymWeekLabel() {
+      const data = getGymWeekData();
+      const filled = Object.values(data.schedule || {}).filter(v => v).length;
+      document.getElementById('gymWeekLabel').textContent = filled + '/7 days planned';
+    }
+
+    function highlightGymTodaySuggestion() {
+      const data = getGymWeekData();
+      const dowMap = { 0: 'sun', 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri', 6: 'sat' };
+      const todayKey = dowMap[currentDate.getDay()];
+      const todayFocus = data.schedule ? data.schedule[todayKey] : '';
+      const suggestion = document.getElementById('gymTodaySuggestion');
+
+      if (todayFocus && gymDayLabels[todayFocus]) {
+        suggestion.style.display = 'block';
+        suggestion.innerHTML = '📅 Today\'s plan: <strong>' + gymDayLabels[todayFocus] + '</strong>';
+      } else {
+        suggestion.style.display = 'none';
+      }
+
+      // Also auto-select today's focus as the day type if no type is active yet
+      const activeBtn = document.querySelector('.gym-day-btn.gym-day-active');
+      if (!activeBtn && todayFocus) {
+        const btn = document.querySelector('.gym-day-btn[data-day="' + todayFocus + '"]');
+        if (btn) selectGymDay(btn);
+      }
+    }
+
+    // Mark a day as completed in the weekly tracker
+    function markGymDayDone(dayOfWeek) {
+      const data = getGymWeekData();
+      if (!data.completed) data.completed = {};
+      data.completed[dayOfWeek] = true;
+      saveGymWeekData(data);
+    }
+
+    // Initialize weekly focus on load
+    loadGymWeeklyFocus();
+
     // ========== MEAL LOG ==========
     function createMealRow(data) {
       const row = document.createElement('div');
@@ -3707,12 +4585,11 @@
       const row = document.createElement('div');
       row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f5f6f0;border-radius:10px;';
       row.innerHTML = `
-      <select style="border:none;outline:none;font-family:inherit;font-size:12px;color:var(--text-light);background:transparent;cursor:pointer;min-width:110px;">
+      <select style="border:none;outline:none;font-family:inherit;font-size:12px;color:var(--text-light);background:transparent;cursor:pointer;min-width:110px;" onchange="scheduleSave();">
         ${expenseCategories.map(c => '<option value="' + c + '"' + (data && data.category === c ? ' selected' : '') + '>' + c + '</option>').join('')}
       </select>
-      <input type="text" placeholder="Description..." value="${(data && data.desc) || ''}" style="flex:1;border:none;outline:none;font-family:inherit;font-size:13px;color:var(--text);background:transparent;min-width:0;">
       <span style="font-size:13px;color:var(--text-light);flex-shrink:0;">₱</span>
-      <input type="number" placeholder="0" step="0.01" value="${(data && data.amount) || ''}" style="width:70px;text-align:right;border:none;outline:none;font-family:inherit;font-size:14px;font-weight:600;color:var(--accent-dark);background:transparent;" oninput="recalcFinance(); scheduleSave();">
+      <input type="number" placeholder="0" step="0.01" value="${(data && data.amount) || ''}" style="flex:1;max-width:100px;text-align:right;border:none;outline:none;font-family:inherit;font-size:14px;font-weight:600;color:var(--accent-dark);background:transparent;" oninput="recalcFinance(); scheduleSave();">
       <button onclick="this.parentElement.remove(); recalcFinance(); scheduleSave();" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:0 4px;">×</button>
     `;
       if (data && data.category) row.querySelector('select').value = data.category;
@@ -3721,25 +4598,6 @@
 
     function addExpense(data) {
       document.getElementById('expenseList').appendChild(createExpenseRow(data));
-      if (!data) document.getElementById('expenseList').lastChild.querySelector('input[type="text"]').focus();
-      recalcFinance();
-    }
-
-    function createIncomeRow(data) {
-      const row = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 12px;background:#eaeed8;border-radius:10px;';
-      row.innerHTML = `
-      <input type="text" placeholder="Income source..." value="${(data && data.source) || ''}" style="flex:1;border:none;outline:none;font-family:inherit;font-size:13px;color:var(--text);background:transparent;">
-      <span style="font-size:13px;color:#6b7c3f;flex-shrink:0;">₱</span>
-      <input type="number" placeholder="0" step="0.01" value="${(data && data.amount) || ''}" style="width:80px;text-align:right;border:none;outline:none;font-family:inherit;font-size:14px;font-weight:600;color:#4a5c3e;background:transparent;" oninput="recalcFinance(); scheduleSave();">
-      <button onclick="this.parentElement.remove(); recalcFinance(); scheduleSave();" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:0 4px;">×</button>
-    `;
-      return row;
-    }
-
-    function addIncome(data) {
-      document.getElementById('incomeList').appendChild(createIncomeRow(data));
-      if (!data) document.getElementById('incomeList').lastChild.querySelector('input[type="text"]').focus();
       recalcFinance();
     }
 
@@ -3751,15 +4609,15 @@
       const pct = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
       row.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-        <input type="text" placeholder="Goal name (e.g. Emergency Fund)..." value="${(data && data.name) || ''}" style="flex:1;border:none;outline:none;font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text);background:transparent;">
-        <button onclick="this.closest('div').parentElement.remove(); scheduleSave();" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;">×</button>
+        <input type="text" placeholder="Goal name (e.g. Emergency Fund)..." value="${(data && data.name) || ''}" style="flex:1;border:none;outline:none;font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text);background:transparent;" oninput="populateSavingsAllocateDropdowns(); saveMonthlyFinance();">
+        <button onclick="this.closest('div').parentElement.remove(); saveMonthlyFinance();" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;">×</button>
       </div>
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
         <div style="flex:1;">
-          <div style="font-size:10px;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Saved</div>
+          <div style="font-size:10px;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Saved <span style="font-size:8px;text-transform:none;letter-spacing:0;color:var(--accent);">(from breakdown)</span></div>
           <div style="display:flex;align-items:baseline;gap:2px;">
             <span style="font-size:12px;color:var(--text-light);">₱</span>
-            <input type="number" class="savings-current" placeholder="0" step="0.01" value="${current || ''}" style="width:90px;font-size:16px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent);background:transparent;" oninput="updateSavingsBar(this); scheduleSave();">
+            <input type="number" class="savings-current" placeholder="0" step="0.01" value="${current || ''}" readonly style="width:90px;font-size:16px;font-weight:700;border:none;outline:none;font-family:inherit;color:var(--accent);background:transparent;cursor:default;" title="Auto-computed from Savings Breakdown allocations">
           </div>
         </div>
         <div style="font-size:18px;color:var(--border);">of</div>
@@ -3767,7 +4625,7 @@
           <div style="font-size:10px;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Target</div>
           <div style="display:flex;align-items:baseline;gap:2px;">
             <span style="font-size:12px;color:var(--text-light);">₱</span>
-            <input type="number" class="savings-target" placeholder="0" step="0.01" value="${target || ''}" style="width:90px;font-size:16px;font-weight:500;border:none;outline:none;font-family:inherit;color:var(--text);background:transparent;" oninput="updateSavingsBar(this); scheduleSave();">
+            <input type="number" class="savings-target" placeholder="0" step="0.01" value="${target || ''}" style="width:90px;font-size:16px;font-weight:500;border:none;outline:none;font-family:inherit;color:var(--text);background:transparent;" oninput="updateSavingsBar(this); saveMonthlyFinance();">
           </div>
         </div>
         <div class="savings-pct" style="font-size:14px;font-weight:700;color:var(--accent);min-width:45px;text-align:right;">${pct}%</div>
@@ -3792,24 +4650,194 @@
       const pct = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
       row.querySelector('.savings-pct').textContent = pct + '%';
       row.querySelector('.savings-bar').style.width = pct + '%';
-      recalcTotalSavings();
+    }
+
+    // Monthly finance keys
+    const MONTHLY_FINANCE_KEY = 'dailyPlanner_monthlyFinance_';
+    function getMonthKey(dateStr) {
+      const d = dateStr ? new Date(dateStr + 'T00:00:00') : new Date();
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    }
+
+    function getMonthlyFinance() {
+      const key = MONTHLY_FINANCE_KEY + getMonthKey(getDateKey());
+      try { return JSON.parse(localStorage.getItem(key)) || {}; }
+      catch (e) { return {}; }
+    }
+
+    function saveMonthlyFinance() {
+      const key = MONTHLY_FINANCE_KEY + getMonthKey(getDateKey());
+      const data = {
+        cashOnHand: document.getElementById('cashOnHand').value,
+        digitalWallet: document.getElementById('digitalWallet').value,
+        // Savings Goals
+        savingsGoals: Array.from(document.querySelectorAll('#savingsGoals > div')).map(row => ({
+          name: row.querySelector('input[type="text"]') ? row.querySelector('input[type="text"]').value : '',
+          current: row.querySelector('.savings-current') ? row.querySelector('.savings-current').value : '',
+          target: row.querySelector('.savings-target') ? row.querySelector('.savings-target').value : ''
+        })),
+        // Savings Breakdown
+        savingsBreakdown: {},
+        savingsAllocations: {},
+        // Investment Breakdown
+        investmentBreakdown: {},
+        investAllocations: {}
+      };
+      document.querySelectorAll('.savings-breakdown-input').forEach(inp => {
+        data.savingsBreakdown[inp.dataset.type] = inp.value;
+      });
+      document.querySelectorAll('.savings-allocate').forEach(sel => {
+        data.savingsAllocations[sel.dataset.type] = sel.value;
+      });
+      document.querySelectorAll('.investment-breakdown-input').forEach(inp => {
+        data.investmentBreakdown[inp.dataset.type] = inp.value;
+      });
+      document.querySelectorAll('.invest-allocate').forEach(sel => {
+        data.investAllocations[sel.dataset.type] = sel.value;
+      });
+      localStorage.setItem(key, JSON.stringify(data));
+    }
+
+    function loadMonthlyFinance() {
+      const mf = getMonthlyFinance();
+      // Cash / Digital
+      document.getElementById('cashOnHand').value = mf.cashOnHand || '';
+      document.getElementById('digitalWallet').value = mf.digitalWallet || '';
+      // Savings Goals
+      if (mf.savingsGoals && mf.savingsGoals.length > 0) {
+        document.getElementById('savingsGoals').innerHTML = '';
+        mf.savingsGoals.forEach(g => addSavingsGoal(g));
+      }
+      // Savings Breakdown
+      if (mf.savingsBreakdown) {
+        document.querySelectorAll('.savings-breakdown-input').forEach(inp => {
+          inp.value = mf.savingsBreakdown[inp.dataset.type] || '';
+        });
+      }
+      // Populate dropdowns then restore selections
+      populateSavingsAllocateDropdowns();
+      if (mf.savingsAllocations) {
+        document.querySelectorAll('.savings-allocate').forEach(sel => {
+          sel.value = mf.savingsAllocations[sel.dataset.type] || '';
+        });
+      }
+      // Investment Breakdown
+      if (mf.investmentBreakdown) {
+        document.querySelectorAll('.investment-breakdown-input').forEach(inp => {
+          inp.value = mf.investmentBreakdown[inp.dataset.type] || '';
+        });
+      }
+      if (mf.investAllocations) {
+        document.querySelectorAll('.invest-allocate').forEach(sel => {
+          sel.value = mf.investAllocations[sel.dataset.type] || '';
+        });
+      }
+    }
+
+    // Backward compat helper: migrate old per-day finance data into monthly key
+    function migratePerDayFinanceToMonthly(data) {
+      const mf = getMonthlyFinance();
+      let needsSave = false;
+      if (!mf.cashOnHand && !mf.digitalWallet) {
+        if (data.cashOnHand || data.digitalWallet) {
+          document.getElementById('cashOnHand').value = data.cashOnHand || '';
+          document.getElementById('digitalWallet').value = data.digitalWallet || '';
+          needsSave = true;
+        }
+      }
+      if (!mf.savingsGoals && data.savingsGoals && data.savingsGoals.length > 0) {
+        document.getElementById('savingsGoals').innerHTML = '';
+        data.savingsGoals.forEach(g => addSavingsGoal(g));
+        needsSave = true;
+      }
+      if (!mf.savingsBreakdown && data.savingsBreakdown) {
+        document.querySelectorAll('.savings-breakdown-input').forEach(inp => {
+          inp.value = data.savingsBreakdown[inp.dataset.type] || '';
+        });
+        needsSave = true;
+      }
+      if (!mf.savingsAllocations && data.savingsAllocations) {
+        document.querySelectorAll('.savings-allocate').forEach(sel => {
+          sel.value = data.savingsAllocations[sel.dataset.type] || '';
+        });
+        needsSave = true;
+      }
+      if (!mf.investmentBreakdown && data.investmentBreakdown) {
+        document.querySelectorAll('.investment-breakdown-input').forEach(inp => {
+          inp.value = data.investmentBreakdown[inp.dataset.type] || '';
+        });
+        needsSave = true;
+      }
+      if (!mf.investAllocations && data.investAllocations) {
+        document.querySelectorAll('.invest-allocate').forEach(sel => {
+          sel.value = data.investAllocations[sel.dataset.type] || '';
+        });
+        needsSave = true;
+      }
+      if (needsSave) saveMonthlyFinance();
+    }
+
+    function getMonthlyExpenseTotal() {
+      // Sum all expenses from all days this month in localStorage (excluding today)
+      const monthKey = getMonthKey(getDateKey());
+      const prefix = STORAGE_PREFIX;
+      const year = monthKey.split('-')[0];
+      const month = monthKey.split('-')[1];
+      let totalExpenses = 0;
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith(prefix)) {
+          const dateStr = k.replace(prefix, '');
+          if (dateStr.startsWith(year + '-' + month)) {
+            if (dateStr === getDateKey()) continue;
+            try {
+              const dayData = JSON.parse(localStorage.getItem(k));
+              if (dayData && dayData.expenses) {
+                dayData.expenses.forEach(e => { totalExpenses += parseFloat(e.amount) || 0; });
+              }
+            } catch (e) { }
+          }
+        }
+      }
+      return totalExpenses;
     }
 
     function recalcFinance() {
-      let totalExp = 0;
+      // Starting budget = Cash on Hand + Digital Wallets
+      const cash = parseFloat(document.getElementById('cashOnHand').value) || 0;
+      const digital = parseFloat(document.getElementById('digitalWallet').value) || 0;
+      const budget = cash + digital;
+      document.getElementById('totalBudgetDisplay').textContent = '₱' + budget.toFixed(2);
+
+      // Today's expenses
+      let todayExp = 0;
       document.querySelectorAll('#expenseList input[type="number"]').forEach(inp => {
-        totalExp += parseFloat(inp.value) || 0;
+        todayExp += parseFloat(inp.value) || 0;
       });
+      const todayLabel = document.getElementById('todayExpenseTotal');
+      if (todayLabel) todayLabel.textContent = '₱' + todayExp.toFixed(2) + ' today';
 
-      let totalInc = 0;
-      document.querySelectorAll('#incomeList input[type="number"]').forEach(inp => {
-        totalInc += parseFloat(inp.value) || 0;
-      });
+      // Previous days' expenses (all days this month before today)
+      const prevDaysExp = getMonthlyExpenseTotal();
+      const monthTotal = prevDaysExp + todayExp;
 
-      const budget = parseFloat(document.getElementById('dailyBudget').value) || 0;
-      const remaining = budget - totalExp;
+      // Today's available = starting budget - all previous days' expenses
+      const todayAvailable = budget - prevDaysExp;
+      const todayAvailableEl = document.getElementById('todayAvailable');
+      const todayAvailableNote = document.getElementById('todayAvailableNote');
+      if (todayAvailableEl) {
+        todayAvailableEl.textContent = '₱' + Math.max(0, todayAvailable).toFixed(2);
+        if (prevDaysExp === 0) {
+          todayAvailableNote.textContent = 'Full starting budget';
+        } else {
+          todayAvailableNote.textContent = 'Carried from previous days';
+        }
+      }
 
-      document.getElementById('totalSpent').textContent = '₱' + totalExp.toFixed(2);
+      // Remaining = today's available - today's expenses
+      const remaining = budget - monthTotal;
+
+      document.getElementById('totalSpent').textContent = '₱' + monthTotal.toFixed(2);
       document.getElementById('remainingAmount').textContent = '₱' + Math.abs(remaining).toFixed(2);
 
       const box = document.getElementById('remainingBox');
@@ -3826,36 +4854,327 @@
         document.getElementById('remainingAmount').style.color = 'var(--accent)';
       }
 
-      // Update total savings accumulation
-      recalcTotalSavings();
+      // End-of-month notification (show during last 3 days of month)
+      checkEndOfMonthNotice(remaining, budget);
     }
 
-    function recalcTotalSavings() {
-      let totalSaved = 0, totalTarget = 0;
-      document.querySelectorAll('#savingsGoals > div').forEach(row => {
-        totalSaved += parseFloat(row.querySelector('.savings-current')?.value) || 0;
-        totalTarget += parseFloat(row.querySelector('.savings-target')?.value) || 0;
+    const CLOSED_MONTHS_KEY = 'dailyPlanner_closedMonths';
+    function getClosedMonths() {
+      try { return JSON.parse(localStorage.getItem(CLOSED_MONTHS_KEY)) || []; } catch (e) { return []; }
+    }
+    function markMonthClosed(monthKey) {
+      const closed = getClosedMonths();
+      if (!closed.includes(monthKey)) { closed.push(monthKey); localStorage.setItem(CLOSED_MONTHS_KEY, JSON.stringify(closed)); }
+    }
+
+    // All savings + investment category labels for allocation dropdowns
+    const allocCategories = [
+      { type: 'bank', label: '🏦 Bank Savings', group: 'savings' },
+      { type: 'cashSavings', label: '💵 Cash Savings', group: 'savings' },
+      { type: 'digitalSavings', label: '📱 Digital Wallet Savings', group: 'savings' },
+      { type: 'otherSavings', label: '📦 Other Savings', group: 'savings' },
+      { type: 'stocks', label: '📈 Stocks', group: 'investment' },
+      { type: 'bonds', label: '🏛️ Govt Bonds', group: 'investment' },
+      { type: 'funds', label: '📊 Mutual Funds / UITF', group: 'investment' },
+      { type: 'crypto', label: '🪙 Crypto / Digital Assets', group: 'investment' },
+      { type: 'otherInvest', label: '🔗 Other Investments', group: 'investment' }
+    ];
+
+    let monthEndRemaining = 0;
+
+    function checkEndOfMonthNotice(remaining, budget) {
+      // Update the close-out button state
+      const btnWrap = document.getElementById('closeOutBtnWrap');
+      const btn = document.getElementById('closeOutMonthBtn');
+      const statusEl = document.getElementById('closeOutStatus');
+      const currentMonthKey = getMonthKey(getDateKey());
+      const alreadyClosed = getClosedMonths().includes(currentMonthKey);
+
+      if (btnWrap && btn && statusEl) {
+        if (alreadyClosed) {
+          btn.style.display = 'none';
+          statusEl.style.display = 'block';
+          statusEl.innerHTML = '✅ This month has been closed out. Funds were allocated.';
+          // Also hide the panel if it was open
+          const notice = document.getElementById('endOfMonthNotice');
+          if (notice) notice.style.display = 'none';
+        } else if (budget <= 0) {
+          btn.style.display = 'none';
+          statusEl.style.display = 'block';
+          statusEl.innerHTML = 'Set your Cash on Hand / Digital Wallet first.';
+          statusEl.style.color = 'var(--text-light)';
+        } else {
+          btn.style.display = 'block';
+          statusEl.style.display = 'none';
+        }
+      }
+
+      // Auto-show panel during last 3 days of month
+      const today = new Date();
+      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+      const daysLeft = lastDay - today.getDate();
+      if (daysLeft <= 3 && !alreadyClosed && budget > 0) {
+        openCloseOutMonth();
+      }
+    }
+
+    function openCloseOutMonth() {
+      const notice = document.getElementById('endOfMonthNotice');
+      const msg = document.getElementById('endOfMonthMsg');
+      const allocPanel = document.getElementById('allocatePanel');
+      if (!notice || !msg) return;
+
+      const currentMonthKey = getMonthKey(getDateKey());
+      const alreadyClosed = getClosedMonths().includes(currentMonthKey);
+      if (alreadyClosed) return;
+
+      const allocError = document.getElementById('allocateError');
+      if (allocError) allocError.style.display = 'none';
+
+      // Recalculate remaining
+      const cash = parseFloat(document.getElementById('cashOnHand').value) || 0;
+      const digital = parseFloat(document.getElementById('digitalWallet').value) || 0;
+      const budget = cash + digital;
+      if (budget <= 0) return;
+
+      let todayExp = 0;
+      document.querySelectorAll('#expenseList input[type="number"]').forEach(inp => {
+        todayExp += parseFloat(inp.value) || 0;
       });
-      const pct = totalTarget > 0 ? Math.min(100, Math.round((totalSaved / totalTarget) * 100)) : 0;
-      document.getElementById('totalSaved').textContent = '₱' + totalSaved.toFixed(2);
-      document.getElementById('totalTarget').textContent = '₱' + totalTarget.toFixed(2);
-      document.getElementById('totalSavingsPct').textContent = pct + '%';
-      document.getElementById('totalSavingsBar').style.width = pct + '%';
+      const prevDaysExp = getMonthlyExpenseTotal();
+      const remaining = budget - prevDaysExp - todayExp;
+
+      notice.style.display = 'block';
+
+      if (remaining > 0) {
+        monthEndRemaining = remaining;
+        msg.innerHTML = 'You have <strong style="color:var(--accent);">₱' + remaining.toFixed(2) + '</strong> remaining this month. Allocate it below to your Savings or Investments:';
+        if (allocPanel) {
+          allocPanel.style.display = 'block';
+          buildAllocateRows(remaining);
+        }
+      } else if (remaining < 0) {
+        monthEndRemaining = 0;
+        msg.innerHTML = 'You are <strong style="color:#8b3a3a;">₱' + Math.abs(remaining).toFixed(2) + ' over budget</strong> this month. Review your expenses and adjust next month\'s plan.';
+        if (allocPanel) allocPanel.style.display = 'none';
+      } else {
+        monthEndRemaining = 0;
+        msg.innerHTML = 'You\'ve spent exactly your budget this month. No remaining funds to allocate.';
+        if (allocPanel) allocPanel.style.display = 'none';
+      }
+
+      // Scroll to the panel
+      notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function closeCloseOutPanel() {
+      const notice = document.getElementById('endOfMonthNotice');
+      if (notice) notice.style.display = 'none';
+    }
+
+    function buildAllocateRows(remaining) {
+      const container = document.getElementById('allocateRows');
+      if (!container) return;
+      // Only rebuild if empty (avoid losing typed values on recalc)
+      if (container.children.length > 0) {
+        recalcAllocateUnallocated();
+        return;
+      }
+      container.innerHTML = '';
+      allocCategories.forEach(cat => {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 10px;background:white;border-radius:8px;border:1px solid #e0e4d4;';
+        row.innerHTML =
+          '<span style="font-size:13px;flex-shrink:0;">' + cat.label.split(' ')[0] + '</span>' +
+          '<span style="flex:1;font-size:11px;font-weight:600;color:var(--text);">' + cat.label.split(' ').slice(1).join(' ') + '</span>' +
+          '<span style="font-size:11px;color:var(--text-light);">₱</span>' +
+          '<input type="number" class="allocate-input" data-type="' + cat.type + '" data-group="' + cat.group + '" placeholder="0" step="0.01" ' +
+          'style="width:75px;text-align:right;font-size:13px;font-weight:600;border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-family:inherit;color:var(--accent-dark);outline:none;" ' +
+          'oninput="recalcAllocateUnallocated()">';
+        container.appendChild(row);
+      });
+      recalcAllocateUnallocated();
+    }
+
+    function recalcAllocateUnallocated() {
+      let totalAlloc = 0;
+      document.querySelectorAll('.allocate-input').forEach(inp => {
+        totalAlloc += parseFloat(inp.value) || 0;
+      });
+      const unalloc = monthEndRemaining - totalAlloc;
+      const el = document.getElementById('allocateUnallocated');
+      if (el) {
+        el.textContent = '₱' + Math.max(0, unalloc).toFixed(2);
+        el.style.color = unalloc < -0.01 ? '#8b3a3a' : 'var(--accent-dark)';
+      }
+    }
+
+    // ---- "Confirm & Close Out Month" flow ----
+    function handleAllocateRemaining() {
+      const allocError = document.getElementById('allocateError');
+      if (allocError) allocError.style.display = 'none';
+
+      // Sum allocations
+      let totalAlloc = 0;
+      document.querySelectorAll('.allocate-input').forEach(inp => {
+        totalAlloc += parseFloat(inp.value) || 0;
+      });
+
+      // Validate: total allocated must not exceed remaining
+      if (totalAlloc > monthEndRemaining + 0.01) {
+        if (allocError) {
+          allocError.style.display = 'block';
+          allocError.innerHTML = '<strong>Over-allocated!</strong> You entered ₱' + totalAlloc.toFixed(2) + ' but only have ₱' + monthEndRemaining.toFixed(2) + ' remaining.';
+        }
+        return;
+      }
+
+      // Apply each allocation to the corresponding savings/investment breakdown
+      document.querySelectorAll('.allocate-input').forEach(inp => {
+        const amount = parseFloat(inp.value) || 0;
+        if (amount <= 0) return;
+        const type = inp.dataset.type;
+        const group = inp.dataset.group;
+
+        // Find the matching breakdown input and add the allocation
+        let selector = group === 'savings' ? '.savings-breakdown-input' : '.investment-breakdown-input';
+        const target = document.querySelector(selector + '[data-type="' + type + '"]');
+        if (target) {
+          const current = parseFloat(target.value) || 0;
+          target.value = (current + amount).toFixed(2);
+        }
+      });
+
+      // Save updated breakdowns to monthly storage
+      saveMonthlyFinance();
+      recalcSavingsBreakdown();
+      recalcInvestments();
+
+      // Mark month as closed
+      const currentMonthKey = getMonthKey(getDateKey());
+      markMonthClosed(currentMonthKey);
+
+      // Recalc to update the notice
+      recalcFinance();
+
+      showToast('✅ Month closed out — ₱' + totalAlloc.toFixed(2) + ' allocated!', '');
     }
 
     function recalcSavingsBreakdown() {
-      let grand = 0;
+      let grandSavings = 0;
       document.querySelectorAll('.savings-breakdown-input').forEach(inp => {
-        grand += parseFloat(inp.value) || 0;
+        grandSavings += parseFloat(inp.value) || 0;
       });
-      document.getElementById('grandTotalSavings').textContent = '₱' + grand.toFixed(2);
+      document.getElementById('grandTotalSavings').textContent = '₱' + grandSavings.toFixed(2);
+
+      // Push all allocations (savings + investments) into goals
+      pushAllocationsToGoals();
+
+      // Recalc net worth (savings + investments)
+      recalcNetWorth();
+    }
+
+    function recalcInvestments() {
+      let grandInvest = 0;
+      document.querySelectorAll('.investment-breakdown-input').forEach(inp => {
+        grandInvest += parseFloat(inp.value) || 0;
+      });
+      document.getElementById('grandTotalInvestments').textContent = '₱' + grandInvest.toFixed(2);
+
+      // Push all allocations (savings + investments) into goals
+      pushAllocationsToGoals();
+
+      // Recalc net worth
+      recalcNetWorth();
+    }
+
+    // Compute per-goal totals from savings breakdown + investment breakdown allocations
+    function pushAllocationsToGoals() {
+      const goalTotals = {};
+      document.querySelectorAll('#savingsGoals > div').forEach(row => {
+        const nameInput = row.querySelector('input[type="text"]');
+        if (nameInput && nameInput.value.trim()) {
+          goalTotals[nameInput.value.trim()] = 0;
+        }
+      });
+
+      // Accumulate from savings breakdown allocations
+      document.querySelectorAll('.savings-breakdown-input').forEach(inp => {
+        const amount = parseFloat(inp.value) || 0;
+        const sel = document.querySelector('.savings-allocate[data-type="' + inp.dataset.type + '"]');
+        if (sel && sel.value && goalTotals.hasOwnProperty(sel.value)) {
+          goalTotals[sel.value] += amount;
+        }
+      });
+
+      // Accumulate from investment breakdown allocations
+      document.querySelectorAll('.investment-breakdown-input').forEach(inp => {
+        const amount = parseFloat(inp.value) || 0;
+        const sel = document.querySelector('.invest-allocate[data-type="' + inp.dataset.type + '"]');
+        if (sel && sel.value && goalTotals.hasOwnProperty(sel.value)) {
+          goalTotals[sel.value] += amount;
+        }
+      });
+
+      // Push totals into each savings goal's "Saved" field
+      document.querySelectorAll('#savingsGoals > div').forEach(row => {
+        const nameInput = row.querySelector('input[type="text"]');
+        const currentInput = row.querySelector('.savings-current');
+        if (nameInput && currentInput && nameInput.value.trim()) {
+          const goalName = nameInput.value.trim();
+          if (goalTotals.hasOwnProperty(goalName)) {
+            currentInput.value = goalTotals[goalName] || '';
+            updateSavingsBar(currentInput);
+          }
+        }
+      });
+    }
+
+    function recalcNetWorth() {
+      let totalSavings = 0;
+      document.querySelectorAll('.savings-breakdown-input').forEach(inp => {
+        totalSavings += parseFloat(inp.value) || 0;
+      });
+      let totalInvest = 0;
+      document.querySelectorAll('.investment-breakdown-input').forEach(inp => {
+        totalInvest += parseFloat(inp.value) || 0;
+      });
+      const netWorth = totalSavings + totalInvest;
+      document.getElementById('grandNetWorth').textContent = '₱' + netWorth.toFixed(2);
+    }
+
+    // Populate savings allocation dropdowns from savings goals
+    function populateSavingsAllocateDropdowns() {
+      const goals = Array.from(document.querySelectorAll('#savingsGoals > div')).map(row => {
+        const nameInput = row.querySelector('input[type="text"]');
+        return nameInput ? nameInput.value : '';
+      }).filter(n => n.trim());
+
+      const optionsHtml = '<option value="">No goal</option>' +
+        goals.map(g => '<option value="' + g + '">' + g + '</option>').join('');
+
+      // Populate savings breakdown dropdowns
+      document.querySelectorAll('.savings-allocate').forEach(sel => {
+        const currentVal = sel.value;
+        sel.innerHTML = optionsHtml;
+        if (currentVal) sel.value = currentVal;
+      });
+
+      // Populate investment breakdown dropdowns
+      document.querySelectorAll('.invest-allocate').forEach(sel => {
+        const currentVal = sel.value;
+        sel.innerHTML = optionsHtml;
+        if (currentVal) sel.value = currentVal;
+      });
     }
 
     // Initialize with a few empty expense rows
     addExpense(); addExpense(); addExpense();
-    addIncome();
     addSavingsGoal();
+    loadMonthlyFinance();
     recalcFinance();
+    recalcSavingsBreakdown();
+    recalcInvestments();
 
     // ========== CLEAR ALL / NEW DAY ==========
     function showClearConfirm() {
@@ -3940,6 +5259,14 @@
       saveCompletedAchievements();
       loadLearningMaster();
 
+      // Clear gym — reset cache for new day
+      if (typeof gymDayExercisesCache !== 'undefined') { gymDayExercisesCache = {}; gymNotesCache = {}; }
+      document.querySelectorAll('.gym-day-btn').forEach(b => { b.classList.remove('gym-day-active'); b.style.background = 'white'; b.style.color = '#888'; b.style.borderColor = '#b8c8a4'; });
+      document.getElementById('gymExerciseList').innerHTML = '';
+      document.getElementById('gymDayLabel').textContent = '';
+      document.getElementById('gymDayLabel').style.display = 'none';
+      document.getElementById('gymNotes').value = '';
+
       // Clear meals
       ['mealBreakfast', 'mealLunch', 'mealDinner', 'mealSnacks'].forEach(id => {
         document.getElementById(id).innerHTML = '';
@@ -3948,29 +5275,28 @@
       });
       document.getElementById('mealNotes').value = '';
 
-      // Clear finance
-      document.getElementById('dailyBudget').value = '';
+      // Clear finance — expenses reset, everything else from monthly storage
       document.getElementById('expenseList').innerHTML = '';
       addExpense(); addExpense(); addExpense();
-      document.getElementById('incomeList').innerHTML = '';
-      addIncome();
-      document.getElementById('savingsGoals').innerHTML = '';
-      addSavingsGoal();
       document.getElementById('financeNotes').value = '';
-      document.querySelectorAll('.savings-breakdown-input').forEach(inp => inp.value = '');
+      loadMonthlyFinance();
       recalcFinance();
       recalcSavingsBreakdown();
+      recalcInvestments();
 
       // Reset progress
       updateProgress();
 
       // New "Something Valuable"
       showValuable();
+
+      // Refresh gym weekly focus
+      if (typeof loadGymWeeklyFocus === 'function') loadGymWeeklyFocus();
     }
 
     // ========== SWIPE TO SWITCH TABS (MOBILE) ==========
     (function () {
-      const tabOrder = ['tasks', 'wellness', 'health', 'routines', 'learn', 'finance', 'notes', 'inspire'];
+      const tabOrder = ['tasks', 'health', 'wellness', 'finance', 'inspire', 'learn', 'notes', 'routines'];
       let touchStartX = 0, touchStartY = 0, swiping = false;
       const container = document.querySelector('.tab-content');
 
@@ -4064,9 +5390,15 @@
       document.querySelectorAll('.card-carousel').forEach(carousel => {
         const track = carousel.querySelector('.carousel-track');
         const dotsContainer = carousel.querySelector('.carousel-dots');
+        const prevBtn = carousel.querySelector('.carousel-prev');
+        const nextBtn = carousel.querySelector('.carousel-next');
         const slides = track.querySelectorAll('.carousel-slide');
 
-        if (slides.length < 2) return;
+        if (slides.length < 2) {
+          if (prevBtn) prevBtn.style.display = 'none';
+          if (nextBtn) nextBtn.style.display = 'none';
+          return;
+        }
 
         // Create dots
         dotsContainer.innerHTML = '';
@@ -4080,19 +5412,44 @@
           dotsContainer.appendChild(dot);
         });
 
-        // Update dots on scroll
+        function getActiveIndex() {
+          const scrollLeft = track.scrollLeft;
+          const slideWidth = track.offsetWidth;
+          return Math.round(scrollLeft / slideWidth);
+        }
+
+        function updateNav() {
+          const idx = getActiveIndex();
+          dotsContainer.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+            dot.classList.toggle('active', i === idx);
+          });
+          if (prevBtn) prevBtn.disabled = (idx <= 0);
+          if (nextBtn) nextBtn.disabled = (idx >= slides.length - 1);
+        }
+
+        // Prev / Next buttons
+        if (prevBtn) {
+          prevBtn.onclick = () => {
+            const idx = getActiveIndex();
+            if (idx > 0) slides[idx - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+          };
+        }
+        if (nextBtn) {
+          nextBtn.onclick = () => {
+            const idx = getActiveIndex();
+            if (idx < slides.length - 1) slides[idx + 1].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+          };
+        }
+
+        // Update on scroll
         let scrollTimer;
         track.addEventListener('scroll', () => {
           clearTimeout(scrollTimer);
-          scrollTimer = setTimeout(() => {
-            const scrollLeft = track.scrollLeft;
-            const slideWidth = track.offsetWidth;
-            const activeIndex = Math.round(scrollLeft / slideWidth);
-            dotsContainer.querySelectorAll('.carousel-dot').forEach((dot, i) => {
-              dot.classList.toggle('active', i === activeIndex);
-            });
-          }, 50);
+          scrollTimer = setTimeout(updateNav, 50);
         }, { passive: true });
+
+        // Initial state
+        updateNav();
       });
     }
 
@@ -4111,6 +5468,8 @@
     renderAchievements();
     // Sync learning to personal tasks on initial load
     syncLearningToPersonalTasks();
+    // Render weight progress on initial load
+    renderWeightProgress();
 
     // Re-initialize when switching tabs (in case a carousel was hidden)
     const origSwitchTab = switchTab;
