@@ -3730,22 +3730,60 @@
       }
       if (data.financeNotes !== undefined) document.getElementById('financeNotes').value = data.financeNotes || '';
 
-      // Show day snapshot if viewing a past day that has one
+      // Check if viewing a past day
+      const today = new Date();
+      const todayKey = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+      const isPastDay = getDateKey() < todayKey;
       const snapshotEl = document.getElementById('dayFinanceSnapshot');
-      if (data.dailyFinanceSummary && snapshotEl) {
+
+      if (isPastDay && data.dailyFinanceSummary) {
+        // Past day with snapshot — show frozen snapshot and lock expenses
         const s = data.dailyFinanceSummary;
         document.getElementById('snapshotAvailable').textContent = '₱' + (s.availableAtStart || 0).toFixed(2);
         document.getElementById('snapshotSpent').textContent = '₱' + (s.todaySpent || 0).toFixed(2);
         const rem = s.remainingAfterToday || 0;
         const remEl = document.getElementById('snapshotRemaining');
-        remEl.textContent = '₱' + Math.abs(rem).toFixed(2);
+        remEl.textContent = (rem < 0 ? '-' : '') + '₱' + Math.abs(rem).toFixed(2);
         remEl.style.color = rem < 0 ? '#8b3a3a' : 'var(--accent-dark)';
         snapshotEl.style.display = 'block';
-      } else if (snapshotEl) {
-        snapshotEl.style.display = 'none';
-      }
 
-      recalcFinance();
+        // Use snapshot values in the main budget display too
+        document.getElementById('totalBudgetDisplay').textContent = '₱' + (s.monthBudget || 0).toFixed(2);
+        document.getElementById('totalSpent').textContent = '₱' + ((s.prevDaysSpent || 0) + (s.todaySpent || 0)).toFixed(2);
+        const todayAvailableEl = document.getElementById('todayAvailable');
+        const todayAvailableNote = document.getElementById('todayAvailableNote');
+        if (todayAvailableEl) {
+          todayAvailableEl.textContent = '₱' + Math.max(0, s.availableAtStart || 0).toFixed(2);
+          todayAvailableNote.textContent = 'Balance at start of this day';
+        }
+        document.getElementById('remainingAmount').textContent = (rem < 0 ? '-' : '') + '₱' + Math.abs(rem).toFixed(2);
+        const box = document.getElementById('remainingBox');
+        const label = document.getElementById('remainingLabel');
+        if (rem < 0) {
+          box.style.background = '#f5e0e0'; label.style.color = '#8b3a3a'; label.textContent = 'Over Budget';
+          document.getElementById('remainingAmount').style.color = '#8b3a3a';
+        } else {
+          box.style.background = 'var(--accent-light)'; label.style.color = 'var(--accent)'; label.textContent = 'End of Day';
+          document.getElementById('remainingAmount').style.color = 'var(--accent)';
+        }
+
+        // Lock expense inputs on past days
+        document.querySelectorAll('#expenseList input, #expenseList select').forEach(el => {
+          el.disabled = true; el.style.opacity = '0.7';
+        });
+        document.getElementById('financeNotes').disabled = true;
+        document.getElementById('financeNotes').style.opacity = '0.7';
+      } else {
+        // Current day or no snapshot — use live calculation
+        if (snapshotEl) snapshotEl.style.display = 'none';
+        // Unlock expense inputs
+        document.querySelectorAll('#expenseList input, #expenseList select').forEach(el => {
+          el.disabled = false; el.style.opacity = '1';
+        });
+        document.getElementById('financeNotes').disabled = false;
+        document.getElementById('financeNotes').style.opacity = '1';
+        recalcFinance();
+      }
       recalcSavingsBreakdown();
       recalcInvestments();
 
@@ -3798,6 +3836,8 @@
       document.getElementById('expenseList').innerHTML = '';
       addExpense(); addExpense(); addExpense();
       document.getElementById('financeNotes').value = '';
+      document.getElementById('financeNotes').disabled = false;
+      document.getElementById('financeNotes').style.opacity = '1';
       const snapshotEl = document.getElementById('dayFinanceSnapshot');
       if (snapshotEl) snapshotEl.style.display = 'none';
       loadMonthlyFinance();
