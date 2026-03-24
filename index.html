@@ -3270,6 +3270,9 @@
       // Load today's data (now from API)
       await loadDayData();
       loadMonthlyFinance();
+      recalcFinance();
+      recalcSavingsBreakdown();
+      recalcInvestments();
       renderWeightProgress();
     }
 
@@ -3500,25 +3503,13 @@
       }));
       data.financeNotes = document.getElementById('financeNotes').value;
 
-      // Snapshot daily finance summary — each day is independent
-      // Lock availableAtStart: once saved for today, don't recompute
+      // Snapshot daily finance summary — uses getTodayAvailable() for consistency
       const todayExp = data.expenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
       const cash = parseFloat(document.getElementById('cashOnHand').value) || 0;
       const digital = parseFloat(document.getElementById('digitalWallet').value) || 0;
-      const startingBudget = cash + digital;
-      let availableAtStart;
-      try {
-        const existing = JSON.parse(cacheGet(STORAGE_PREFIX + getDateKey()));
-        if (existing && existing.dailyFinanceSummary && existing.dailyFinanceSummary.availableAtStart !== undefined) {
-          availableAtStart = existing.dailyFinanceSummary.availableAtStart;
-        }
-      } catch (e) { }
-      if (availableAtStart === undefined) {
-        const prevRemaining = getPreviousDayRemaining();
-        availableAtStart = (prevRemaining !== null) ? prevRemaining : startingBudget;
-      }
+      const availableAtStart = getTodayAvailable();
       data.dailyFinanceSummary = {
-        startingBudget: startingBudget,
+        startingBudget: cash + digital,
         availableAtStart: availableAtStart,
         todaySpent: todayExp,
         remainingAfterToday: availableAtStart - todayExp
@@ -5510,20 +5501,19 @@
       return totalExpenses;
     }
 
-    // Cache today's available balance — set once when the day loads, doesn't change mid-session
+    // Cache today's available balance
+    // ONLY cached when the value comes from a saved snapshot (locked).
+    // When derived from live DOM (startingBudget), recomputed every time.
     let _cachedTodayAvailable = null;
     let _cachedForDate = null;
 
     function getTodayAvailable() {
       const dk = getDateKey();
-      // Return cache if already computed for this date
+
+      // Return cache if locked from a saved snapshot
       if (_cachedTodayAvailable !== null && _cachedForDate === dk) return _cachedTodayAvailable;
 
-      const cash = parseFloat(document.getElementById('cashOnHand').value) || 0;
-      const digital = parseFloat(document.getElementById('digitalWallet').value) || 0;
-      const startingBudget = cash + digital;
-
-      // Check if today already has a locked availableAtStart in cache
+      // Check if today already has a saved snapshot with locked availableAtStart
       try {
         const existing = JSON.parse(cacheGet(STORAGE_PREFIX + dk));
         if (existing && existing.dailyFinanceSummary && existing.dailyFinanceSummary.availableAtStart !== undefined) {
@@ -5533,11 +5523,19 @@
         }
       } catch (e) { }
 
-      // Compute from previous day
+      // No saved snapshot — compute live (NOT cached, recomputed on every call)
       const prevRemaining = getPreviousDayRemaining();
-      _cachedTodayAvailable = (prevRemaining !== null) ? prevRemaining : startingBudget;
-      _cachedForDate = dk;
-      return _cachedTodayAvailable;
+      if (prevRemaining !== null) {
+        // Previous day has data — lock this value since it won't change
+        _cachedTodayAvailable = prevRemaining;
+        _cachedForDate = dk;
+        return _cachedTodayAvailable;
+      }
+
+      // First day — use live startingBudget from DOM (do NOT cache, may change as user types)
+      const cash = parseFloat(document.getElementById('cashOnHand').value) || 0;
+      const digital = parseFloat(document.getElementById('digitalWallet').value) || 0;
+      return cash + digital;
     }
 
     function recalcFinance() {
@@ -5931,13 +5929,9 @@
       });
     }
 
-    // Initialize with a few empty expense rows
+    // Initialize with a few empty expense rows (data loaded after auth in onSignedIn)
     addExpense(); addExpense(); addExpense();
     addSavingsGoal();
-    loadMonthlyFinance();
-    recalcFinance();
-    recalcSavingsBreakdown();
-    recalcInvestments();
 
     // ========== CLEAR ALL / NEW DAY ==========
     function showClearConfirm() {
