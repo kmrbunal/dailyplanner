@@ -17,11 +17,17 @@ app.use("/api", express.json());
 app.use("/api", apiRoutes);
 
 // Serve the built React app
-app.use(express.static(path.join(__dirname, "dist")));
+const distPath = path.join(__dirname, "dist");
+app.use(express.static(distPath));
 
 // SPA fallback — serve index.html for any non-API route
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
+app.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api")) return next();
+  res.sendFile(path.join(distPath, "index.html"), (err) => {
+    if (err) {
+      res.status(500).send("App not built yet. Run: cd client && npm run build");
+    }
+  });
 });
 
 // Start server after DB is ready
@@ -29,6 +35,7 @@ db.initDB()
   .then(() => {
     app.listen(PORT, () => {
       console.log("Server running on port " + PORT);
+      console.log("Serving static files from:", distPath);
     });
   })
   .catch((err) => {
