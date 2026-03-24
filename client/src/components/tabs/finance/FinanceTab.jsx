@@ -7,7 +7,6 @@ import SavingsGoalsCard from './SavingsGoalsCard';
 import SavingsBreakdownCard from './SavingsBreakdownCard';
 import InvestmentBreakdownCard from './InvestmentBreakdownCard';
 import cardStyles from '../../common/Card.module.css';
-import carouselStyles from '../../common/Carousel.module.css';
 import styles from './FinanceTab.module.css';
 
 /**
@@ -195,66 +194,49 @@ export default function FinanceTab() {
   );
 
   return (
-    <div className={carouselStyles.cardCarousel} data-carousel="finance">
-      <div className={carouselStyles.carouselTrack}>
-        {/* Slide 1: Monthly Budget Overview */}
-        <div className={carouselStyles.carouselSlide}>
-          <MonthlyBudgetCard onApplyAllocations={handleApplyAllocations} />
-        </div>
+    <div className={styles.financeGrid}>
+      <MonthlyBudgetCard onApplyAllocations={handleApplyAllocations} />
 
-        {/* Slide 2: Savings Goals */}
-        <div className={carouselStyles.carouselSlide}>
-          <SavingsGoalsCard
-            goals={savingsGoals}
-            onGoalChange={handleGoalChange}
-            onGoalRemove={handleGoalRemove}
-            onAddGoal={handleAddGoal}
-            goalTotals={goalTotals}
-          />
-        </div>
+      <SavingsGoalsCard
+        goals={savingsGoals}
+        onGoalChange={handleGoalChange}
+        onGoalRemove={handleGoalRemove}
+        onAddGoal={handleAddGoal}
+        goalTotals={goalTotals}
+      />
 
-        {/* Slide 3: Savings Breakdown */}
-        <div className={carouselStyles.carouselSlide}>
-          <SavingsBreakdownCard
-            breakdown={savingsBreakdown}
-            allocations={savingsAllocations}
-            goalNames={goalNames}
-            onBreakdownChange={handleSavingsBreakdownChange}
-            onAllocationChange={handleSavingsAllocationChange}
-            grandTotal={grandTotalSavings}
-          />
-        </div>
+      <SavingsBreakdownCard
+        breakdown={savingsBreakdown}
+        allocations={savingsAllocations}
+        goalNames={goalNames}
+        onBreakdownChange={handleSavingsBreakdownChange}
+        onAllocationChange={handleSavingsAllocationChange}
+        grandTotal={grandTotalSavings}
+      />
 
-        {/* Slide 4: Investment Breakdown */}
-        <div className={carouselStyles.carouselSlide}>
-          <InvestmentBreakdownCard
-            breakdown={investmentBreakdown}
-            allocations={investAllocations}
-            goalNames={goalNames}
-            onBreakdownChange={handleInvestBreakdownChange}
-            onAllocationChange={handleInvestAllocationChange}
-            grandTotal={grandTotalInvestments}
-            netWorth={netWorth}
-          />
-        </div>
+      <InvestmentBreakdownCard
+        breakdown={investmentBreakdown}
+        allocations={investAllocations}
+        goalNames={goalNames}
+        onBreakdownChange={handleInvestBreakdownChange}
+        onAllocationChange={handleInvestAllocationChange}
+        grandTotal={grandTotalInvestments}
+        netWorth={netWorth}
+      />
 
-        {/* Slide 5: Finance Notes */}
-        <div className={carouselStyles.carouselSlide}>
-          <div className={cardStyles.card} style={{ gridColumn: 'span 2' }}>
-            <div className={cardStyles.cardTitle} style={{ color: 'var(--text-light)' }}>
-              <span className="icon" style={{ background: '#eee' }}>
-                {'\uD83D\uDCD2'}
-              </span>
-              Finance Notes
-            </div>
-            <textarea
-              className={styles.notesArea}
-              placeholder="Reminders, bills due, subscriptions to cancel..."
-              value={dayData.financeNotes || ''}
-              onChange={handleNotesChange}
-            />
-          </div>
+      <div className={cardStyles.card}>
+        <div className={cardStyles.cardTitle} style={{ color: 'var(--text-light)' }}>
+          <span className={cardStyles.icon} style={{ background: '#eee' }}>
+            {'\uD83D\uDCD2'}
+          </span>
+          Finance Notes
         </div>
+        <textarea
+          className={styles.notesArea}
+          placeholder="Reminders, bills due, subscriptions to cancel..."
+          value={dayData.financeNotes || ''}
+          onChange={handleNotesChange}
+        />
       </div>
     </div>
   );

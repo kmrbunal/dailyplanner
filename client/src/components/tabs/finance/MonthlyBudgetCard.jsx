@@ -40,7 +40,7 @@ export default function MonthlyBudgetCard({ onApplyAllocations }) {
   // Don't render finance calculations until store data is synced from cloud
   if (!synced) {
     return (
-      <div className={cardStyles.card} style={{ gridColumn: 'span 2', textAlign: 'center', padding: '40px 24px', color: 'var(--text-light)' }}>
+      <div className={cardStyles.card} style={{ textAlign: 'center', padding: '40px 24px', color: 'var(--text-light)' }}>
         Loading finance data...
       </div>
     );
@@ -142,7 +142,7 @@ export default function MonthlyBudgetCard({ onApplyAllocations }) {
   const formatPeso = (v) => '\u20B1' + v.toFixed(2);
 
   return (
-    <div className={cardStyles.card} style={{ gridColumn: 'span 2' }}>
+    <div className={cardStyles.card}>
       <div className={cardStyles.cardTitle} style={{ color: 'var(--accent)' }}>
         <span
           className="icon"

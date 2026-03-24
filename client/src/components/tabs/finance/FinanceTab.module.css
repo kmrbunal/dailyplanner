@@ -1,5 +1,25 @@
 /* ========== FINANCE TAB ========== */
 
+.financeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.financeGrid > * {
+  grid-column: span 2;
+}
+
+@media (max-width: 700px) {
+  .financeGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .financeGrid > * {
+    grid-column: span 1;
+  }
+}
+
 /* ---------- Shared Section Heading ---------- */
 .sectionLabel {
   font-size: 11px;
