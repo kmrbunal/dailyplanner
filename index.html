@@ -1796,8 +1796,10 @@
     }
   </style>
   <script
+    async
     data-clerk-publishable-key="pk_test_Y2FyZWZ1bC1ib2FyLTUxLmNsZXJrLmFjY291bnRzLmRldiQ"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+    src="https://careful-boar-51.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+    type="text/javascript"
     crossorigin="anonymous"
   ></script>
 </head>
@@ -1808,7 +1810,7 @@
   <div id="auth-container" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);padding:24px;">
     <h1 style="font-family:'Playfair Display',serif;font-size:28px;color:var(--accent-dark);margin-bottom:8px;font-style:italic;letter-spacing:2px;">Daily Planner</h1>
     <p style="font-family:'DM Sans',sans-serif;color:var(--text-light);margin-bottom:24px;font-size:14px;">Sign in to sync your planner across devices</p>
-    <div id="clerk-sign-in"></div>
+    <div id="clerk-sign-in"><p style="font-family:'DM Sans',sans-serif;color:var(--text-light);font-size:13px;">Loading sign-in...</p></div>
   </div>
 
   <div class="planner" id="planner" style="display:none">
@@ -3067,10 +3069,26 @@
       return apiPut('store/' + storeKey, data);
     }
 
+    // Wait for Clerk CDN script to finish loading
+    function waitForClerk() {
+      return new Promise((resolve) => {
+        if (window.Clerk) return resolve(window.Clerk);
+        const check = setInterval(() => {
+          if (window.Clerk) { clearInterval(check); resolve(window.Clerk); }
+        }, 100);
+        // Give up after 10 seconds
+        setTimeout(() => { clearInterval(check); resolve(null); }, 10000);
+      });
+    }
+
     // Initialize Clerk auth
     async function initAuth() {
-      const clerk = window.Clerk;
-      if (!clerk) { console.error('Clerk failed to load'); return; }
+      const clerk = await waitForClerk();
+      if (!clerk) {
+        console.error('Clerk failed to load');
+        document.getElementById('auth-container').innerHTML = '<p style="color:red;font-family:DM Sans,sans-serif;">Failed to load sign-in. Please refresh the page.</p>';
+        return;
+      }
       await clerk.load();
 
       if (clerk.user) {
