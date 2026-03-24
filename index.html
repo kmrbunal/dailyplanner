@@ -3540,12 +3540,22 @@
       data.financeNotes = document.getElementById('financeNotes').value;
 
       // Snapshot daily finance summary — each day is independent
+      // Lock availableAtStart: once saved for today, don't recompute
       const todayExp = data.expenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
       const cash = parseFloat(document.getElementById('cashOnHand').value) || 0;
       const digital = parseFloat(document.getElementById('digitalWallet').value) || 0;
       const startingBudget = cash + digital;
-      const prevRemaining = getPreviousDayRemaining();
-      const availableAtStart = (prevRemaining !== null) ? prevRemaining : startingBudget;
+      let availableAtStart;
+      try {
+        const existing = JSON.parse(localStorage.getItem(STORAGE_PREFIX + getDateKey()));
+        if (existing && existing.dailyFinanceSummary && existing.dailyFinanceSummary.availableAtStart !== undefined) {
+          availableAtStart = existing.dailyFinanceSummary.availableAtStart;
+        }
+      } catch (e) { }
+      if (availableAtStart === undefined) {
+        const prevRemaining = getPreviousDayRemaining();
+        availableAtStart = (prevRemaining !== null) ? prevRemaining : startingBudget;
+      }
       data.dailyFinanceSummary = {
         startingBudget: startingBudget,
         availableAtStart: availableAtStart,
@@ -3975,6 +3985,8 @@
 
       // Update current date and clear UI
       currentDate = newDate;
+      _cachedTodayAvailable = null; // Reset finance cache for new date
+      _cachedForDate = null;
       document.getElementById('dateDisplay').textContent = formatDate(currentDate);
       clearUI();
       loadDayData().catch(console.error);
@@ -5442,31 +5454,52 @@
 
     // Find the most recent saved day BEFORE the given date in the same month
     // Returns its remainingAfterToday, or null if no previous day exists
-    function getPreviousDayRemaining() {
-      const dk = getDateKey();
-      const monthPrefix = dk.substring(0, 7); // "YYYY-MM"
+    // Get all saved days this month sorted, with their expense totals and snapshots
+    function getMonthDaysSorted() {
+      const monthPrefix = getDateKey().substring(0, 7);
       const prefix = STORAGE_PREFIX;
-      let bestDate = null;
-      let bestRemaining = null;
-
+      const days = [];
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
         if (k && k.startsWith(prefix)) {
           const dateStr = k.replace(prefix, '');
-          if (dateStr.startsWith(monthPrefix) && dateStr < dk && dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
-            if (!bestDate || dateStr > bestDate) {
-              try {
-                const dayData = JSON.parse(localStorage.getItem(k));
-                if (dayData && dayData.dailyFinanceSummary) {
-                  bestDate = dateStr;
-                  bestRemaining = dayData.dailyFinanceSummary.remainingAfterToday;
-                }
-              } catch (e) { }
-            }
+          if (dateStr.startsWith(monthPrefix) && dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            try {
+              const dayData = JSON.parse(localStorage.getItem(k));
+              if (dayData) {
+                let spent = 0;
+                if (dayData.expenses) dayData.expenses.forEach(e => { spent += parseFloat(e.amount) || 0; });
+                days.push({ date: dateStr, spent: spent, snapshot: dayData.dailyFinanceSummary || null });
+              }
+            } catch (e) { }
           }
         }
       }
-      return bestRemaining;
+      return days.sort((a, b) => a.date.localeCompare(b.date));
+    }
+
+    // Walk the chain of days to find what's available for the current day
+    function getPreviousDayRemaining() {
+      const dk = getDateKey();
+      const days = getMonthDaysSorted().filter(d => d.date < dk);
+      if (days.length === 0) return null;
+
+      const cash = parseFloat(document.getElementById('cashOnHand').value) || 0;
+      const digital = parseFloat(document.getElementById('digitalWallet').value) || 0;
+      const startBudget = cash + digital;
+
+      // Walk forward from the first day, carrying remaining forward
+      let balance = startBudget;
+      for (const day of days) {
+        // If this day has a snapshot, trust it
+        if (day.snapshot && day.snapshot.remainingAfterToday !== undefined) {
+          balance = day.snapshot.remainingAfterToday;
+        } else {
+          // No snapshot — compute: balance from previous day minus this day's expenses
+          balance = balance - day.spent;
+        }
+      }
+      return balance;
     }
 
     // Sum all expenses from all days this month (excluding today) — used for month-total display
@@ -5493,14 +5526,44 @@
       return totalExpenses;
     }
 
+    // Cache today's available balance — set once when the day loads, doesn't change mid-session
+    let _cachedTodayAvailable = null;
+    let _cachedForDate = null;
+
+    function getTodayAvailable() {
+      const dk = getDateKey();
+      // Return cache if already computed for this date
+      if (_cachedTodayAvailable !== null && _cachedForDate === dk) return _cachedTodayAvailable;
+
+      const cash = parseFloat(document.getElementById('cashOnHand').value) || 0;
+      const digital = parseFloat(document.getElementById('digitalWallet').value) || 0;
+      const startingBudget = cash + digital;
+
+      // Check if today already has a locked availableAtStart in localStorage
+      try {
+        const existing = JSON.parse(localStorage.getItem(STORAGE_PREFIX + dk));
+        if (existing && existing.dailyFinanceSummary && existing.dailyFinanceSummary.availableAtStart !== undefined) {
+          _cachedTodayAvailable = existing.dailyFinanceSummary.availableAtStart;
+          _cachedForDate = dk;
+          return _cachedTodayAvailable;
+        }
+      } catch (e) { }
+
+      // Compute from previous day
+      const prevRemaining = getPreviousDayRemaining();
+      _cachedTodayAvailable = (prevRemaining !== null) ? prevRemaining : startingBudget;
+      _cachedForDate = dk;
+      return _cachedTodayAvailable;
+    }
+
     function recalcFinance() {
-      // Starting budget = Cash on Hand + Digital Wallets (set once for the month)
+      // Starting budget display
       const cash = parseFloat(document.getElementById('cashOnHand').value) || 0;
       const digital = parseFloat(document.getElementById('digitalWallet').value) || 0;
       const startingBudget = cash + digital;
       document.getElementById('totalBudgetDisplay').textContent = '₱' + startingBudget.toFixed(2);
 
-      // Today's expenses
+      // Today's expenses (live from DOM)
       let todayExp = 0;
       document.querySelectorAll('#expenseList input[type="number"]').forEach(inp => {
         todayExp += parseFloat(inp.value) || 0;
@@ -5508,23 +5571,18 @@
       const todayLabel = document.getElementById('todayExpenseTotal');
       if (todayLabel) todayLabel.textContent = '₱' + todayExp.toFixed(2) + ' today';
 
-      // Today's available = previous day's remaining OR starting budget if first day
-      const prevRemaining = getPreviousDayRemaining();
-      const todayAvailable = (prevRemaining !== null) ? prevRemaining : startingBudget;
+      // Today's available — locked once per day session
+      const todayAvailable = getTodayAvailable();
 
       const todayAvailableEl = document.getElementById('todayAvailable');
       const todayAvailableNote = document.getElementById('todayAvailableNote');
       if (todayAvailableEl) {
         todayAvailableEl.textContent = '₱' + todayAvailable.toFixed(2);
         todayAvailableEl.style.color = todayAvailable < 0 ? '#8b3a3a' : 'var(--accent-dark)';
-        if (prevRemaining !== null) {
-          todayAvailableNote.textContent = 'Carried from previous day';
-        } else {
-          todayAvailableNote.textContent = 'Starting budget (first day)';
-        }
+        todayAvailableNote.textContent = (_cachedForDate && getPreviousDayRemaining() !== null) ? 'Carried from previous day' : 'Starting budget (first day)';
       }
 
-      // Remaining = today's available - today's expenses
+      // Remaining = today's available - today's expenses (updates live as user types)
       const remaining = todayAvailable - todayExp;
 
       // Month spent (for info only)

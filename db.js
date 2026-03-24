@@ -4,6 +4,8 @@ const sql = neon(process.env.DATABASE_URL);
 
 // Create tables on first run
 async function initDB() {
+  // Drop old tables if they exist with wrong schema (dev only — safe because data is also in localStorage)
+  // In production, you'd use migrations instead
   await sql`
     CREATE TABLE IF NOT EXISTS user_profile (
       user_id TEXT PRIMARY KEY,
@@ -19,7 +21,7 @@ async function initDB() {
   await sql`
     CREATE TABLE IF NOT EXISTS user_day_data (
       id SERIAL PRIMARY KEY,
-      user_id TEXT NOT NULL REFERENCES user_profile(user_id),
+      user_id TEXT NOT NULL,
       date_key TEXT NOT NULL,
       data JSONB NOT NULL DEFAULT '{}',
       updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -29,13 +31,16 @@ async function initDB() {
   await sql`
     CREATE TABLE IF NOT EXISTS user_store (
       id SERIAL PRIMARY KEY,
-      user_id TEXT NOT NULL REFERENCES user_profile(user_id),
+      user_id TEXT NOT NULL,
       store_key TEXT NOT NULL,
       data JSONB NOT NULL DEFAULT '{}',
       updated_at TIMESTAMPTZ DEFAULT NOW(),
       UNIQUE(user_id, store_key)
     )
   `;
+  // Add indexes for fast lookup
+  await sql`CREATE INDEX IF NOT EXISTS idx_day_data_user ON user_day_data(user_id)`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_store_user ON user_store(user_id)`;
   console.log("Database tables ready");
 }
 
