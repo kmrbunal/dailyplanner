@@ -3160,6 +3160,15 @@
     // ========== AUTH & API LAYER ==========
     let clerkUser = null;
 
+    // ========== IN-MEMORY CLOUD CACHE ==========
+    // All data lives in cloud (NeonDB). This cache provides instant reads.
+    // Writes go to cache + cloud API. No localStorage used.
+    const _cache = {};
+    function cacheGet(key) { return _cache[key] || null; }
+    function cacheSet(key, value) { _cache[key] = value; }
+    function cacheRemove(key) { delete _cache[key]; }
+    function cacheKeys() { return Object.keys(_cache); }
+
     async function getAuthToken() {
       if (!window.Clerk || !window.Clerk.session) return null;
       return await window.Clerk.session.getToken();
@@ -3252,10 +3261,10 @@
       // Load profile into account tab
       loadProfile();
 
-      // Migrate localStorage data to cloud on first sign-in
+      // Migration (no-op — cloud only)
       await migrateLocalToCloud();
 
-      // Sync all store data from cloud into localStorage cache
+      // Sync all store data from cloud into memory cache
       await syncStoreFromCloud();
 
       // Load today's data (now from API)
@@ -3264,7 +3273,7 @@
       renderWeightProgress();
     }
 
-    // Pull all cloud store data into localStorage so get* functions work instantly
+    // Pull all cloud store data into memory cache so get* functions work instantly
     async function syncStoreFromCloud() {
       // Fetch cloud date list for calendar
       try {
@@ -3282,14 +3291,14 @@
       for (const { cloud, local } of storeKeys) {
         try {
           const data = await apiLoadStore(cloud);
-          if (data) localStorage.setItem(local, JSON.stringify(data));
+          if (data) cacheSet(local, JSON.stringify(data));
         } catch (e) { }
       }
       // Sync current month's finance
       try {
         const mk = getMonthKey(getDateKey());
         const mf = await apiLoadStore('monthlyFinance_' + mk);
-        if (mf) localStorage.setItem(MONTHLY_FINANCE_KEY + mk, JSON.stringify(mf));
+        if (mf) cacheSet(MONTHLY_FINANCE_KEY + mk, JSON.stringify(mf));
       } catch (e) { }
 
       // Sync this month's day data so getMonthlyExpenseTotal() works correctly
@@ -3298,10 +3307,10 @@
         const monthDates = _cloudDates.filter(d => d.startsWith(monthPrefix) && d !== getDateKey());
         for (const d of monthDates) {
           const lsKey = STORAGE_PREFIX + d;
-          if (!localStorage.getItem(lsKey)) {
+          if (!cacheGet(lsKey)) {
             try {
               const json = await apiGet('days/' + d);
-              if (json && json.data) localStorage.setItem(lsKey, JSON.stringify(json.data));
+              if (json && json.data) cacheSet(lsKey, JSON.stringify(json.data));
             } catch (e) { }
           }
         }
@@ -3341,57 +3350,9 @@
       }
     }
 
-    // Migrate existing localStorage data to cloud on first sign-in
-    async function migrateLocalToCloud() {
-      if (!clerkUser) return;
-      try {
-        // Check if cloud already has data
-        const cloudDates = await apiGet('days');
-        if (cloudDates && cloudDates.length > 0) return; // Already has cloud data
-
-        // Migrate day data
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && key.startsWith(STORAGE_PREFIX) && key.match(/\d{4}-\d{2}-\d{2}$/)) {
-            const dateKey = key.replace(STORAGE_PREFIX, '');
-            try {
-              const data = JSON.parse(localStorage.getItem(key));
-              await apiPut('days/' + dateKey, data);
-            } catch (e) { }
-          }
-        }
-
-        // Migrate store keys
-        const storeMap = {
-          'dailyPlanner_routines': 'routines',
-          'dailyPlanner_learning_active': 'learning_active',
-          'dailyPlanner_achievements': 'achievements',
-          'dailyPlanner_weight_history': 'weight_history',
-          'dailyPlanner_gym_routines': 'gym_routines',
-          'dailyPlanner_gym_weekly': 'gym_weekly',
-          'dailyPlanner_closedMonths': 'closedMonths'
-        };
-        for (const [lsKey, storeKey] of Object.entries(storeMap)) {
-          const raw = localStorage.getItem(lsKey);
-          if (raw) {
-            try { await apiSaveStore(storeKey, JSON.parse(raw)); } catch (e) { }
-          }
-        }
-
-        // Migrate monthly finance keys
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && key.startsWith('dailyPlanner_monthlyFinance_')) {
-            const suffix = key.replace('dailyPlanner_monthlyFinance_', '');
-            try { await apiSaveStore('monthlyFinance_' + suffix, JSON.parse(localStorage.getItem(key))); } catch (e) { }
-          }
-        }
-
-        showToast('Data migrated to cloud!', 'loaded');
-      } catch (err) {
-        console.error('Migration failed', err);
-      }
-    }
+    // Migration (no-op — cloud only now)
+    // Migration no longer needed — all data is cloud-only
+    async function migrateLocalToCloud() { }
 
     // Start auth when page loads
     window.addEventListener('load', initAuth);
@@ -3547,7 +3508,7 @@
       const startingBudget = cash + digital;
       let availableAtStart;
       try {
-        const existing = JSON.parse(localStorage.getItem(STORAGE_PREFIX + getDateKey()));
+        const existing = JSON.parse(cacheGet(STORAGE_PREFIX + getDateKey()));
         if (existing && existing.dailyFinanceSummary && existing.dailyFinanceSummary.availableAtStart !== undefined) {
           availableAtStart = existing.dailyFinanceSummary.availableAtStart;
         }
@@ -3864,7 +3825,7 @@
       updateProgress();
     }
 
-    // Save current day to localStorage
+    // Save current day to cloud + cache
     async function saveDayData() {
       const key = STORAGE_PREFIX + getDateKey();
       const data = collectDayData();
@@ -3886,8 +3847,8 @@
         data.financeNotes;
 
       if (hasContent) {
-        // Always save to localStorage (instant)
-        localStorage.setItem(key, JSON.stringify(data));
+        // Save to cache (instant) + cloud (async)
+        cacheSet(key, JSON.stringify(data));
         // Also save to cloud if signed in
         if (clerkUser) {
           try {
@@ -3908,7 +3869,7 @@
       saveCompletedAchievements();
     }
 
-    // Load a day's data — tries API first, falls back to localStorage
+    // Load a day's data from cloud, with cache fallback
     async function loadDayData(dateKey) {
       const dk = dateKey || getDateKey();
       const lsKey = STORAGE_PREFIX + dk;
@@ -3920,15 +3881,15 @@
           const json = await apiGet('days/' + dk);
           if (json && json.data) {
             data = json.data;
-            // Update localStorage cache
-            localStorage.setItem(lsKey, JSON.stringify(data));
+            // Update memory cache
+            cacheSet(lsKey, JSON.stringify(data));
           }
-        } catch (err) { console.error('Cloud load failed, using localStorage', err); }
+        } catch (err) { console.error('Cloud load failed, using cache', err); }
       }
 
-      // Fall back to localStorage
+      // Fall back to cache
       if (!data) {
-        const raw = localStorage.getItem(lsKey);
+        const raw = cacheGet(lsKey);
         if (raw) {
           try { data = JSON.parse(raw); } catch (e) { }
         }
@@ -3951,7 +3912,9 @@
 
     // Debounced auto-save
     let _saveTimer = null;
+    let _switchingDate = false; // Suppress auto-save during date switches
     function scheduleSave() {
+      if (_switchingDate) return;
       clearTimeout(_saveTimer);
       _saveTimer = setTimeout(() => { saveDayData().catch(console.error); }, 1500);
     }
@@ -3959,37 +3922,60 @@
     // Cache of cloud date keys (populated on sign-in)
     let _cloudDates = [];
 
-    // Get all saved date keys (local + cloud)
+    // Get all saved date keys (from cloud + cache)
     function getSavedDates() {
       const dates = new Set(_cloudDates);
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith(STORAGE_PREFIX) && key.match(/\d{4}-\d{2}-\d{2}$/)) {
+      cacheKeys().forEach(key => {
+        if (key.startsWith(STORAGE_PREFIX) && key.match(/\d{4}-\d{2}-\d{2}$/)) {
           dates.add(key.replace(STORAGE_PREFIX, ''));
         }
-      }
+      });
       return Array.from(dates);
     }
 
     // Switch date with save/load
     function switchDate(newDate) {
+      // Cancel any pending auto-save so it doesn't fire after we switch
+      clearTimeout(_saveTimer);
+
       // Collect current day's data synchronously before clearing UI
       const prevDateKey = getDateKey();
       const prevData = collectDayData();
       saveLearningMaster();
       saveCompletedAchievements();
-      // Save to storage in background (uses pre-collected data)
-      const prevKey = STORAGE_PREFIX + prevDateKey;
-      localStorage.setItem(prevKey, JSON.stringify(prevData));
-      if (clerkUser) apiPut('days/' + prevDateKey, prevData).catch(console.error);
+
+      // Only save if there's actual content (don't write empty records)
+      const hasContent = prevData.notes || prevData.weight ||
+        (prevData.topPriorities && prevData.topPriorities.some(p => p)) ||
+        prevData.mood >= 0 ||
+        (prevData.gratitude && prevData.gratitude.some(g => g)) ||
+        (prevData.water && prevData.water.some(w => w)) ||
+        (prevData.expenses && prevData.expenses.some(e => e.amount)) ||
+        ['workTodos', 'healthTodos', 'personalTodos'].some(id => prevData[id] && prevData[id].some(t => t.text));
+
+      if (hasContent) {
+        const prevKey = STORAGE_PREFIX + prevDateKey;
+        cacheSet(prevKey, JSON.stringify(prevData));
+        if (clerkUser) apiPut('days/' + prevDateKey, prevData).catch(console.error);
+      }
+
+      // Suppress auto-save during the switch
+      _switchingDate = true;
+      clearTimeout(_saveTimer);
 
       // Update current date and clear UI
       currentDate = newDate;
-      _cachedTodayAvailable = null; // Reset finance cache for new date
+      _cachedTodayAvailable = null;
       _cachedForDate = null;
       document.getElementById('dateDisplay').textContent = formatDate(currentDate);
       clearUI();
-      loadDayData().catch(console.error);
+      loadDayData().then(() => {
+        // Re-enable auto-save after load completes
+        _switchingDate = false;
+      }).catch((err) => {
+        _switchingDate = false;
+        console.error(err);
+      });
       // Refresh weekly focus for the new date context
       if (typeof loadGymWeeklyFocus === 'function') loadGymWeeklyFocus();
     }
@@ -4019,7 +4005,7 @@
           const data = JSON.parse(e.target.result);
           if (data._date) {
             // Save to the correct date key
-            localStorage.setItem(STORAGE_PREFIX + data._date, JSON.stringify(data));
+            cacheSet(STORAGE_PREFIX + data._date, JSON.stringify(data));
             if (clerkUser) apiPut('days/' + data._date, data).catch(console.error);
             // If it's for today's date, also restore UI
             if (data._date === getDateKey()) {
@@ -4046,7 +4032,7 @@
       const allData = {};
       const dates = getSavedDates();
       dates.forEach(dateKey => {
-        const raw = localStorage.getItem(STORAGE_PREFIX + dateKey);
+        const raw = cacheGet(STORAGE_PREFIX + dateKey);
         if (raw) allData[dateKey] = JSON.parse(raw);
       });
       allData._exported = new Date().toISOString();
@@ -4072,7 +4058,7 @@
           Object.keys(allData).forEach(key => {
             if (key.startsWith('_')) return; // Skip metadata
             if (key.match(/^\d{4}-\d{2}-\d{2}$/)) {
-              localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(allData[key]));
+              cacheSet(STORAGE_PREFIX + key, JSON.stringify(allData[key]));
               if (clerkUser) apiPut('days/' + key, allData[key]).catch(console.error);
               count++;
             }
@@ -4348,7 +4334,7 @@
         emoji: item.querySelector('span') ? item.querySelector('span').textContent : ''
       })).filter(l => l.text && l.status !== 'done');
 
-      localStorage.setItem(LEARNING_MASTER_KEY, JSON.stringify(items));
+      cacheSet(LEARNING_MASTER_KEY, JSON.stringify(items));
       if (clerkUser) apiSaveStore('learning_active', items).catch(console.error);
     }
 
@@ -4359,9 +4345,9 @@
       if (clerkUser) {
         try { items = await apiLoadStore('learning_active'); } catch (e) { }
       }
-      // Fall back to localStorage
+      // Fall back to cache
       if (!items) {
-        const raw = localStorage.getItem(LEARNING_MASTER_KEY);
+        const raw = cacheGet(LEARNING_MASTER_KEY);
         if (raw) try { items = JSON.parse(raw); } catch (e) { }
       }
       if (!items || items.length === 0) return;
@@ -4390,10 +4376,10 @@
       const newlyCompleted = currentItems.filter(l => l.text && l.status === 'done');
       if (newlyCompleted.length === 0) return;
 
-      // Load existing achievements (localStorage is synced from cloud on sign-in)
+      // Load existing achievements from cache
       let achievements = [];
       try {
-        const raw = localStorage.getItem(ACHIEVEMENTS_KEY);
+        const raw = cacheGet(ACHIEVEMENTS_KEY);
         if (raw) achievements = JSON.parse(raw);
         if (!Array.isArray(achievements)) achievements = [];
       } catch (e) { achievements = []; }
@@ -4410,7 +4396,7 @@
         }
       });
 
-      localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify(achievements));
+      cacheSet(ACHIEVEMENTS_KEY, JSON.stringify(achievements));
       if (clerkUser) apiSaveStore('achievements', achievements).catch(console.error);
       renderAchievements();
     }
@@ -4422,10 +4408,10 @@
       if (clerkUser) {
         try { const cloud = await apiLoadStore('achievements'); if (cloud) achievements = cloud; } catch (e) { }
       }
-      // Fall back to localStorage
+      // Fall back to cache
       if (achievements.length === 0) {
         try {
-          const raw = localStorage.getItem(ACHIEVEMENTS_KEY);
+          const raw = cacheGet(ACHIEVEMENTS_KEY);
           if (raw) achievements = JSON.parse(raw);
         } catch (e) { }
       }
@@ -4532,7 +4518,7 @@
         health: getRoutineTexts('routineHealth'),
         personal: getRoutineTexts('routinePersonal')
       };
-      localStorage.setItem('dailyPlanner_routines', JSON.stringify(routines));
+      cacheSet('dailyPlanner_routines', JSON.stringify(routines));
       if (clerkUser) apiSaveStore('routines', routines).catch(console.error);
       const status = document.getElementById('routineStatus');
       status.textContent = 'Routines saved! (' + (routines.work.length + routines.health.length + routines.personal.length) + ' tasks total)';
@@ -4545,9 +4531,9 @@
       if (clerkUser) {
         try { routines = await apiLoadStore('routines'); } catch (e) { }
       }
-      // Fall back to localStorage
+      // Fall back to cache
       if (!routines) {
-        const raw = localStorage.getItem('dailyPlanner_routines');
+        const raw = cacheGet('dailyPlanner_routines');
         if (raw) try { routines = JSON.parse(raw); } catch (e) { }
       }
       if (!routines || ((routines.work || []).length + (routines.health || []).length + (routines.personal || []).length === 0)) {
@@ -4562,7 +4548,7 @@
           setTimeout(() => document.getElementById('routineStatus').textContent = '', 3000);
           return;
         }
-        localStorage.setItem('dailyPlanner_routines', JSON.stringify(r));
+        cacheSet('dailyPlanner_routines', JSON.stringify(r));
         if (clerkUser) apiSaveStore('routines', r).catch(console.error);
         loadIntoTodos(r);
       } else {
@@ -4824,7 +4810,7 @@
     const WEIGHT_HISTORY_KEY = 'dailyPlanner_weight_history';
 
     function getWeightHistory() {
-      try { return JSON.parse(localStorage.getItem(WEIGHT_HISTORY_KEY)) || {}; }
+      try { return JSON.parse(cacheGet(WEIGHT_HISTORY_KEY)) || {}; }
       catch (e) { return {}; }
     }
 
@@ -4834,7 +4820,7 @@
       if (!w || isNaN(w)) return;
       const history = getWeightHistory();
       history[getDateKey()] = { weight: w, unit: unit };
-      localStorage.setItem(WEIGHT_HISTORY_KEY, JSON.stringify(history));
+      cacheSet(WEIGHT_HISTORY_KEY, JSON.stringify(history));
       if (clerkUser) apiSaveStore('weight_history', history).catch(console.error);
       renderWeightProgress();
     }
@@ -4843,7 +4829,7 @@
       const history = getWeightHistory();
       if (!history[dateKey]) return;
       delete history[dateKey];
-      localStorage.setItem(WEIGHT_HISTORY_KEY, JSON.stringify(history));
+      cacheSet(WEIGHT_HISTORY_KEY, JSON.stringify(history));
       if (clerkUser) apiSaveStore('weight_history', history).catch(console.error);
       // If deleting today's entry, also clear the input
       if (dateKey === getDateKey()) {
@@ -4992,7 +4978,7 @@
     let gymNotesCache = {};
 
     function getGymRoutines() {
-      try { return JSON.parse(localStorage.getItem(GYM_ROUTINE_KEY)) || {}; }
+      try { return JSON.parse(cacheGet(GYM_ROUTINE_KEY)) || {}; }
       catch (e) { return {}; }
     }
 
@@ -5006,7 +4992,7 @@
       }
       const routines = getGymRoutines();
       routines[dayType] = exercises.map(e => ({ name: e.name, sets: e.sets, reps: e.reps, pr: e.pr }));
-      localStorage.setItem(GYM_ROUTINE_KEY, JSON.stringify(routines));
+      cacheSet(GYM_ROUTINE_KEY, JSON.stringify(routines));
       if (clerkUser) apiSaveStore('gym_routines', routines).catch(console.error);
       // Also update the cache so it reflects the save
       gymDayExercisesCache[dayType] = exercises;
@@ -5142,7 +5128,7 @@
 
     function getGymWeekData() {
       try {
-        const all = JSON.parse(localStorage.getItem(GYM_WEEK_KEY)) || {};
+        const all = JSON.parse(cacheGet(GYM_WEEK_KEY)) || {};
         const weekId = getWeekMonday(currentDate);
         // Auto-reset: if the stored week doesn't match current week, start fresh
         // but carry forward the schedule template from last week
@@ -5154,7 +5140,7 @@
             schedule: lastWeek ? Object.assign({}, lastWeek.schedule) : {},
             completed: {}
           };
-          localStorage.setItem(GYM_WEEK_KEY, JSON.stringify(all));
+          cacheSet(GYM_WEEK_KEY, JSON.stringify(all));
         }
         return all[weekId];
       } catch (e) { return { schedule: {}, completed: {} }; }
@@ -5162,10 +5148,10 @@
 
     function saveGymWeekData(data) {
       try {
-        const all = JSON.parse(localStorage.getItem(GYM_WEEK_KEY)) || {};
+        const all = JSON.parse(cacheGet(GYM_WEEK_KEY)) || {};
         const weekId = getWeekMonday(currentDate);
         all[weekId] = data;
-        localStorage.setItem(GYM_WEEK_KEY, JSON.stringify(all));
+        cacheSet(GYM_WEEK_KEY, JSON.stringify(all));
         if (clerkUser) apiSaveStore('gym_weekly', all).catch(console.error);
       } catch (e) { }
     }
@@ -5335,7 +5321,7 @@
 
     function getMonthlyFinance() {
       const key = MONTHLY_FINANCE_KEY + getMonthKey(getDateKey());
-      try { return JSON.parse(localStorage.getItem(key)) || {}; }
+      try { return JSON.parse(cacheGet(key)) || {}; }
       catch (e) { return {}; }
     }
 
@@ -5369,7 +5355,7 @@
       document.querySelectorAll('.invest-allocate').forEach(sel => {
         data.investAllocations[sel.dataset.type] = sel.value;
       });
-      localStorage.setItem(key, JSON.stringify(data));
+      cacheSet(key, JSON.stringify(data));
       if (clerkUser) apiSaveStore('monthlyFinance_' + getMonthKey(getDateKey()), data).catch(console.error);
     }
 
@@ -5459,13 +5445,12 @@
       const monthPrefix = getDateKey().substring(0, 7);
       const prefix = STORAGE_PREFIX;
       const days = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && k.startsWith(prefix)) {
+      cacheKeys().forEach(k => {
+        if (k.startsWith(prefix)) {
           const dateStr = k.replace(prefix, '');
           if (dateStr.startsWith(monthPrefix) && dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
             try {
-              const dayData = JSON.parse(localStorage.getItem(k));
+              const dayData = JSON.parse(cacheGet(k));
               if (dayData) {
                 let spent = 0;
                 if (dayData.expenses) dayData.expenses.forEach(e => { spent += parseFloat(e.amount) || 0; });
@@ -5474,7 +5459,7 @@
             } catch (e) { }
           }
         }
-      }
+      });
       return days.sort((a, b) => a.date.localeCompare(b.date));
     }
 
@@ -5505,24 +5490,23 @@
     // Sum all expenses from all days this month (excluding today) — used for month-total display
     function getMonthlyExpenseTotal() {
       const monthKey = getMonthKey(getDateKey());
-      const prefix = STORAGE_PREFIX;
       const year = monthKey.split('-')[0];
       const month = monthKey.split('-')[1];
+      const prefix = STORAGE_PREFIX;
       let totalExpenses = 0;
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && k.startsWith(prefix)) {
+      cacheKeys().forEach(k => {
+        if (k.startsWith(prefix)) {
           const dateStr = k.replace(prefix, '');
           if (dateStr.startsWith(year + '-' + month) && dateStr !== getDateKey() && dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
             try {
-              const dayData = JSON.parse(localStorage.getItem(k));
+              const dayData = JSON.parse(cacheGet(k));
               if (dayData && dayData.expenses) {
                 dayData.expenses.forEach(e => { totalExpenses += parseFloat(e.amount) || 0; });
               }
             } catch (e) { }
           }
         }
-      }
+      });
       return totalExpenses;
     }
 
@@ -5539,9 +5523,9 @@
       const digital = parseFloat(document.getElementById('digitalWallet').value) || 0;
       const startingBudget = cash + digital;
 
-      // Check if today already has a locked availableAtStart in localStorage
+      // Check if today already has a locked availableAtStart in cache
       try {
-        const existing = JSON.parse(localStorage.getItem(STORAGE_PREFIX + dk));
+        const existing = JSON.parse(cacheGet(STORAGE_PREFIX + dk));
         if (existing && existing.dailyFinanceSummary && existing.dailyFinanceSummary.availableAtStart !== undefined) {
           _cachedTodayAvailable = existing.dailyFinanceSummary.availableAtStart;
           _cachedForDate = dk;
@@ -5611,11 +5595,11 @@
 
     const CLOSED_MONTHS_KEY = 'dailyPlanner_closedMonths';
     function getClosedMonths() {
-      try { return JSON.parse(localStorage.getItem(CLOSED_MONTHS_KEY)) || []; } catch (e) { return []; }
+      try { return JSON.parse(cacheGet(CLOSED_MONTHS_KEY)) || []; } catch (e) { return []; }
     }
     function markMonthClosed(monthKey) {
       const closed = getClosedMonths();
-      if (!closed.includes(monthKey)) { closed.push(monthKey); localStorage.setItem(CLOSED_MONTHS_KEY, JSON.stringify(closed)); if (clerkUser) apiSaveStore('closedMonths', closed).catch(console.error); }
+      if (!closed.includes(monthKey)) { closed.push(monthKey); cacheSet(CLOSED_MONTHS_KEY, JSON.stringify(closed)); if (clerkUser) apiSaveStore('closedMonths', closed).catch(console.error); }
     }
 
     // All savings + investment category labels for allocation dropdowns
