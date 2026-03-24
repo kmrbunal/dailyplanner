@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useDayContext } from '../../../context/DayContext';
 import { useStoreContext } from '../../../context/StoreContext';
 import { getDateKey, getMonthKey } from '../../../services/dateUtils';
@@ -76,6 +76,29 @@ export default function MonthlyBudgetCard({ onApplyAllocations }) {
   }, [hasSnapshot, snapshot, dateKey, startingBudget]);
 
   const remaining = todayAvailable - todaySpent;
+
+  // Keep dayData.dailyFinanceSummary in sync so auto-save writes correct values
+  useEffect(() => {
+    if (isPastDay || !synced) return;
+    const current = dayData.dailyFinanceSummary || {};
+    // Only dispatch if values actually changed to avoid infinite loops
+    if (
+      current.availableAtStart !== todayAvailable ||
+      current.todaySpent !== todaySpent ||
+      current.startingBudget !== startingBudget
+    ) {
+      dispatch({
+        type: 'SET_FIELD',
+        field: 'dailyFinanceSummary',
+        value: {
+          startingBudget,
+          availableAtStart: todayAvailable,
+          todaySpent,
+          remainingAfterToday: todayAvailable - todaySpent,
+        },
+      });
+    }
+  }, [todayAvailable, todaySpent, startingBudget, isPastDay, synced, dispatch]);
 
   // Note text under "Today's Available"
   const availableNote = useMemo(() => {
