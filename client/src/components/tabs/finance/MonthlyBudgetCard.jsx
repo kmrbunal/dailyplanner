@@ -29,13 +29,22 @@ import styles from './FinanceTab.module.css';
  */
 export default function MonthlyBudgetCard({ onApplyAllocations }) {
   const { dayData, dispatch, currentDate } = useDayContext();
-  const { monthlyFinance, saveMonthlyFinance } = useStoreContext();
+  const { monthlyFinance, saveMonthlyFinance, synced } = useStoreContext();
 
   const [closeOutVisible, setCloseOutVisible] = useState(false);
 
   const dateKey = useMemo(() => getDateKey(currentDate), [currentDate]);
   const todayKey = useMemo(() => getDateKey(new Date()), []);
   const isPastDay = dateKey < todayKey;
+
+  // Don't render finance calculations until store data is synced from cloud
+  if (!synced) {
+    return (
+      <div className={cardStyles.card} style={{ gridColumn: 'span 2', textAlign: 'center', padding: '40px 24px', color: 'var(--text-light)' }}>
+        Loading finance data...
+      </div>
+    );
+  }
 
   // ---- Monthly starting funds (from monthlyFinance in StoreContext) ----
   const cashOnHand = parseFloat(monthlyFinance.cashOnHand) || 0;
