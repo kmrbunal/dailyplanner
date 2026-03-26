@@ -56,6 +56,7 @@ export default function Header({ headerGradient, onClearDay, onAccountClick }) {
             className={styles.dateDisplay}
             onClick={(e) => { e.stopPropagation(); setShowCalendar(!showCalendar) }}
           >
+            <span style={{ marginRight: 8, fontSize: 16 }}>{'\uD83D\uDCC5'}</span>
             {formatDate(currentDate)}
           </div>
           {showCalendar && (

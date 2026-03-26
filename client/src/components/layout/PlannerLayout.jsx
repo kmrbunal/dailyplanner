@@ -15,9 +15,10 @@ import LearnTab from '../tabs/learn/LearnTab'
 import NotesTab from '../tabs/notes/NotesTab'
 import RoutinesTab from '../tabs/routines/RoutinesTab'
 import AccountTab from '../tabs/account/AccountTab'
+import ReportsTab from '../tabs/reports/ReportsTab'
 import styles from './PlannerLayout.module.css'
 
-const TAB_ORDER = ['tasks', 'health', 'wellness', 'finance', 'inspire', 'learn', 'notes', 'routines', 'account']
+const TAB_ORDER = ['tasks', 'health', 'wellness', 'finance', 'inspire', 'learn', 'notes', 'routines', 'reports', 'account']
 
 const TAB_THEMES = {
   tasks: { gradient: 'linear-gradient(135deg, #3d6b5e, #2a4a3e, #1e3830)', accent: '#3d6b5e' },
@@ -28,6 +29,7 @@ const TAB_THEMES = {
   finance: { gradient: 'linear-gradient(135deg, #7a6b3c, #5c4f2a, #3d341c)', accent: '#7a6b3c' },
   notes: { gradient: 'linear-gradient(135deg, #8b6b3e, #6b4f2e, #4a3520)', accent: '#8b6b3e' },
   inspire: { gradient: 'linear-gradient(135deg, #8b5e4a, #6b4235, #4a2c22)', accent: '#8b5e4a' },
+  reports: { gradient: 'linear-gradient(135deg, #4a5e6b, #344550, #222e38)', accent: '#4a5e6b' },
   account: { gradient: 'linear-gradient(135deg, #5a6b5e, #3e4f42, #2a382e)', accent: '#5a6b5e' },
 }
 
@@ -40,6 +42,7 @@ const TAB_COMPONENTS = {
   learn: LearnTab,
   notes: NotesTab,
   routines: RoutinesTab,
+  reports: ReportsTab,
   account: AccountTab,
 }
 

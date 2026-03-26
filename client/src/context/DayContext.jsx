@@ -76,12 +76,15 @@ function createEmptyDayData() {
 
     // Finance
     expenses: [{ category: '', amount: '' }],
+    extraDeposit: '',
     financeNotes: '',
     dailyFinanceSummary: {
-      startingBudget: 0,
-      availableAtStart: 0,
+      poolCarried: 0,
+      dailyAllocation: 0,
+      extraDeposit: 0,
+      todayAvailable: 0,
       todaySpent: 0,
-      remainingAfterToday: 0,
+      remaining: 0,
     },
   };
 }
