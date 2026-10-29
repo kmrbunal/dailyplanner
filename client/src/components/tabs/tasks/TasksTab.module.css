@@ -184,6 +184,7 @@
 
 .todoTextInput {
   flex: 1;
+  min-width: 0;
   border: none;
   outline: none;
   font-size: 13px;
@@ -282,6 +283,252 @@
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
+}
+
+/* ========== DYNAMIC PRIORITY VALUE ========== */
+
+.topPriorityValue {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topPriorityEmpty {
+  color: #8a9180;
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* ========== ROW ACTIONS ========== */
+
+.todoRow {
+  display: flex;
+  flex-direction: column;
+}
+
+.rowMenuBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px 4px;
+  color: var(--text-light);
+  opacity: 0.35;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+.rowMenuBtn:hover,
+.rowMenuBtnOpen {
+  opacity: 1;
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.actionStrip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 0 6px 28px;
+}
+
+.actionBtn {
+  background: #f5f6f0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-family: inherit;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.actionBtn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-light);
+}
+
+.actionBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.actionBtnDanger {
+  color: #b5524a;
+}
+
+.actionBtnDanger:hover:not(:disabled) {
+  border-color: #b5524a;
+  color: white;
+  background: #b5524a;
+}
+
+.confirmText {
+  font-size: 12px;
+  color: var(--text);
+  margin-right: 4px;
+  overflow-wrap: anywhere;
+}
+
+/* ========== DETAILS (NOTES + SUBTASKS) ========== */
+
+.detailsBadge {
+  background: var(--accent-light);
+  border: none;
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 10px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.detailsBadgeDone {
+  background: var(--accent);
+  color: white;
+}
+
+.detailsPanel {
+  margin: 2px 0 8px 28px;
+  padding: 10px 12px;
+  background: #f5f6f0;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.notesInput {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--text);
+  background: white;
+  resize: vertical;
+  outline: none;
+}
+
+.notesInput:focus {
+  border-color: var(--accent);
+}
+
+.subtaskHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+.subtaskProgress {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.subtaskList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.subtaskItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.subtaskCheck {
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+}
+
+.subtaskCheck:checked::after {
+  font-size: 10px;
+}
+
+.subtaskInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text);
+  background: transparent;
+  padding: 3px 0;
+}
+
+.subtaskInput::placeholder {
+  color: #bbb;
+}
+
+.subtaskInput.checked {
+  text-decoration: line-through;
+  color: var(--text-light);
+}
+
+.subtaskBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: #aaa;
+  padding: 0 3px;
+  flex-shrink: 0;
+  font-family: inherit;
+}
+
+.subtaskBtn:hover:not(:disabled) {
+  color: var(--accent);
+}
+
+.subtaskBtn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.subtaskDelete {
+  font-size: 15px;
+}
+
+.subtaskDelete:hover:not(:disabled) {
+  color: #e66;
+}
+
+.addSubBtn {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.addSubBtn:hover {
+  color: var(--accent);
 }
 
 /* ========== ADD BUTTON ========== */
@@ -416,6 +663,16 @@
   .taskCat {
     padding: 14px;
   }
+
+  .actionStrip,
+  .detailsPanel {
+    padding-left: 0;
+    margin-left: 0;
+  }
+
+  .detailsPanel {
+    padding-left: 10px;
+  }
 }
 
 @media print {
@@ -432,6 +689,13 @@
   }
 
   .carouselNav {
+    display: none;
+  }
+
+  .rowMenuBtn,
+  .actionStrip,
+  .addSubBtn,
+  .subtaskBtn {
     display: none;
   }
 }

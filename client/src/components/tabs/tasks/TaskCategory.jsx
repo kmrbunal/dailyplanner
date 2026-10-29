@@ -1,6 +1,14 @@
-import { useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useDayContext } from '../../../context/DayContext';
 import TodoItem from './TodoItem';
+import {
+  createTodo,
+  getPriorityTask,
+  insertAt,
+  moveById,
+  moveToTop,
+  removeById,
+} from '../../../services/taskUtils';
 import styles from './TasksTab.module.css';
 
 /**
@@ -9,8 +17,6 @@ import styles from './TasksTab.module.css';
 const CATEGORY_CONFIG = {
   work: {
     todosKey: 'workTodos',
-    priorityIndex: 0,
-    priorityPlaceholder: 'Your #1 work priority today...',
     taskPlaceholder: 'Work task...',
     priorityBoxClass: '',
     priorityLabelClass: styles.work || '',
@@ -19,8 +25,6 @@ const CATEGORY_CONFIG = {
   },
   health: {
     todosKey: 'healthTodos',
-    priorityIndex: 1,
-    priorityPlaceholder: 'Your #1 health goal today...',
     taskPlaceholder: 'Workout or health goal...',
     priorityBoxClass: styles.health || '',
     priorityLabelClass: styles.health || '',
@@ -29,8 +33,6 @@ const CATEGORY_CONFIG = {
   },
   personal: {
     todosKey: 'personalTodos',
-    priorityIndex: 2,
-    priorityPlaceholder: 'Your #1 personal priority today...',
     taskPlaceholder: 'Personal task...',
     priorityBoxClass: styles.personal || '',
     priorityLabelClass: styles.personal || '',
@@ -42,53 +44,69 @@ const CATEGORY_CONFIG = {
 /**
  * TaskCategory renders a card with:
  *   - Title with icon
- *   - Top priority input
- *   - Todo list
+ *   - Top priority strip (dynamic: first open, named task in row order)
+ *   - Todo list (insert / move / delete / details per row)
  *   - "Add task" button
  *
  * Props:
  *   category - "work" | "health" | "personal"
  *   title    - display title, e.g. "Work To-Dos"
- *   icon     - emoji string, e.g. "\uD83D\uDCBC"
+ *   icon     - emoji string, e.g. "💼"
  */
 export default function TaskCategory({ category, title, icon }) {
   const { dayData, dispatch } = useDayContext();
   const config = CATEGORY_CONFIG[category];
   const todosKey = config.todosKey;
   const todos = dayData[todosKey] || [];
+  const [focusId, setFocusId] = useState(null);
 
-  // --- Top priority ---
-  const priorityValue = (dayData.topPriorities || [])[config.priorityIndex] || '';
-
-  const handlePriorityChange = useCallback(
-    (e) => {
-      const updated = [...(dayData.topPriorities || ['', '', ''])];
-      updated[config.priorityIndex] = e.target.value;
-      dispatch({ type: 'SET_FIELD', field: 'topPriorities', value: updated });
-    },
-    [dayData.topPriorities, config.priorityIndex, dispatch]
-  );
-
-  // --- Todo updates ---
-  const handleTodoChange = useCallback(
-    (index, updates) => {
-      dispatch({ type: 'SET_TODO', category: todosKey, index, updates });
-    },
+  // All list changes go through a pure updater applied to the latest state.
+  const updateList = useCallback(
+    (updater) => dispatch({ type: 'UPDATE_TODOS', category: todosKey, updater }),
     [todosKey, dispatch]
   );
 
-  const handleTodoToggle = useCallback(
-    (index) => {
-      dispatch({ type: 'TOGGLE_TODO', category: todosKey, index });
-    },
-    [todosKey, dispatch]
+  // --- Dynamic top priority (computed independently for this column) ---
+  const priorityTask = getPriorityTask(todos);
+  const hasNamedTasks = todos.some((t) => (t.text || '').trim());
+  let priorityText;
+  if (priorityTask) priorityText = priorityTask.text.trim();
+  else if (hasNamedTasks) priorityText = 'All tasks completed!';
+  else priorityText = 'Add a task to set your priority';
+
+  // --- Row operations (by id, so other rows are never affected) ---
+  const handleChange = useCallback(
+    (id, updates) =>
+      updateList((list) =>
+        list.map((t) =>
+          t.id === id ? { ...t, ...(typeof updates === 'function' ? updates(t) : updates) } : t
+        )
+      ),
+    [updateList]
   );
 
-  // --- Add task ---
+  const handleToggle = useCallback(
+    (id) => updateList((list) => list.map((t) => (t.id === id ? { ...t, checked: !t.checked } : t))),
+    [updateList]
+  );
+
+  const handleInsert = useCallback(
+    (id, offset) => {
+      const fresh = createTodo();
+      updateList((list) => {
+        const idx = list.findIndex((t) => t.id === id);
+        return insertAt(list, idx === -1 ? list.length : idx + offset, fresh);
+      });
+      setFocusId(fresh.id);
+    },
+    [updateList, setFocusId]
+  );
+
   const handleAddTask = useCallback(() => {
-    const newList = [...todos, { text: '', checked: false, alarm: '' }];
-    dispatch({ type: 'SET_FIELD', field: todosKey, value: newList });
-  }, [todos, todosKey, dispatch]);
+    const fresh = createTodo();
+    updateList((list) => [...list, fresh]);
+    setFocusId(fresh.id);
+  }, [updateList, setFocusId]);
 
   return (
     <div className={styles.taskCat}>
@@ -100,25 +118,36 @@ export default function TaskCategory({ category, title, icon }) {
       {/* Top Priority Box */}
       <div className={`${styles.topPriorityBox} ${config.priorityBoxClass}`}>
         <span className={`${styles.topPriorityLabel} ${config.priorityLabelClass}`}>
-          {'\uD83C\uDFAF'} Top Priority
+          {'🎯'} Top Priority
         </span>
-        <input
-          type="text"
-          className={`${styles.topPriorityInput} ${config.priorityInputClass}`}
-          placeholder={config.priorityPlaceholder}
-          value={priorityValue}
-          onChange={handlePriorityChange}
-        />
+        <span
+          className={`${styles.topPriorityInput} ${styles.topPriorityValue} ${config.priorityInputClass} ${
+            priorityTask ? '' : styles.topPriorityEmpty
+          }`}
+          title={priorityText}
+          aria-live="polite"
+        >
+          {priorityText}
+        </span>
       </div>
 
       {/* Todo List */}
       <div className={styles.todoList}>
         {todos.map((todo, i) => (
           <TodoItem
-            key={i}
+            key={todo.id || i}
             todo={todo}
-            onChange={(updates) => handleTodoChange(i, updates)}
-            onToggle={() => handleTodoToggle(i)}
+            onChange={(updates) => handleChange(todo.id, updates)}
+            onToggle={() => handleToggle(todo.id)}
+            onInsertAbove={() => handleInsert(todo.id, 0)}
+            onInsertBelow={() => handleInsert(todo.id, 1)}
+            onMoveUp={() => updateList((list) => moveById(list, todo.id, -1))}
+            onMoveDown={() => updateList((list) => moveById(list, todo.id, 1))}
+            onMoveTop={() => updateList((list) => moveToTop(list, todo.id))}
+            onDelete={() => updateList((list) => removeById(list, todo.id))}
+            canMoveUp={i > 0}
+            canMoveDown={i < todos.length - 1}
+            autoFocus={todo.id === focusId}
             placeholder={config.taskPlaceholder}
             checkClass={styles[config.checkClass] || ''}
           />

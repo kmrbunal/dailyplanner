@@ -11,6 +11,12 @@ import { useAuthContext } from './AuthContext';
 import { apiGet, apiPut } from '../services/api';
 import { cacheGet, cacheSet } from '../services/cache';
 import { getDateKey } from '../services/dateUtils';
+import {
+  TODO_KEYS,
+  createTodo,
+  normalizeDayTodos,
+  computeTopPriorities,
+} from '../services/taskUtils';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -28,10 +34,11 @@ function createEmptyDayData() {
     // Top priorities (3 slots)
     topPriorities: ['', '', ''],
 
-    // Task categories — each item: { text, checked, alarm }
-    workTodos: Array.from({ length: 5 }, () => ({ text: '', checked: false, alarm: '' })),
-    healthTodos: Array.from({ length: 5 }, () => ({ text: '', checked: false, alarm: '' })),
-    personalTodos: Array.from({ length: 5 }, () => ({ text: '', checked: false, alarm: '' })),
+    // Task categories — each item:
+    //   { id, text, checked, alarm, notes?, subtasks?: [{ id, text, checked }], routineId? }
+    workTodos: Array.from({ length: 5 }, () => createTodo()),
+    healthTodos: Array.from({ length: 5 }, () => createTodo()),
+    personalTodos: Array.from({ length: 5 }, () => createTodo()),
 
     // Mood: -1 = none selected, 0-4 = mood index
     mood: -1,
@@ -97,12 +104,34 @@ const ACTION = {
   SET_FIELD: 'SET_FIELD',
   SET_TODO: 'SET_TODO',
   TOGGLE_TODO: 'TOGGLE_TODO',
+  UPDATE_TODOS: 'UPDATE_TODOS',
   SET_EXPENSE: 'SET_EXPENSE',
   RESTORE_DAY: 'RESTORE_DAY',
   CLEAR_DAY: 'CLEAR_DAY',
 };
 
+/**
+ * Keep the legacy topPriorities field (read by Reports and PDF export) in sync
+ * with the dynamic per-column priority: the first open, named task in each column.
+ */
+function withSyncedPriorities(state) {
+  const next = computeTopPriorities(state);
+  const prev = state.topPriorities || [];
+  if (next.every((p, i) => p === (prev[i] || ''))) return state;
+  return { ...state, topPriorities: next };
+}
+
 function dayReducer(state, action) {
+  const next = baseDayReducer(state, action);
+  const touchesTodos =
+    action.type === ACTION.SET_TODO ||
+    action.type === ACTION.TOGGLE_TODO ||
+    action.type === ACTION.UPDATE_TODOS ||
+    (action.type === ACTION.SET_FIELD && TODO_KEYS.includes(action.field));
+  return touchesTodos && next !== state ? withSyncedPriorities(next) : next;
+}
+
+function baseDayReducer(state, action) {
   switch (action.type) {
     // Generic field setter: dispatch({ type: 'SET_FIELD', field: 'mood', value: 2 })
     // Also supports nested paths: field: 'dailyFinanceSummary.todaySpent'
@@ -142,6 +171,16 @@ function dayReducer(state, action) {
       return { ...state, [category]: list };
     }
 
+    // Replace a task column using a pure updater on the latest state:
+    // dispatch({ type: 'UPDATE_TODOS', category: 'workTodos', updater: (list) => newList })
+    case ACTION.UPDATE_TODOS: {
+      const { category, updater } = action;
+      const prev = state[category] || [];
+      const list = updater(prev);
+      if (list === prev) return state;
+      return { ...state, [category]: list };
+    }
+
     // Update a specific expense row
     // dispatch({ type: 'SET_EXPENSE', index: 0, updates: { amount: '50' } })
     case ACTION.SET_EXPENSE: {
@@ -153,7 +192,8 @@ function dayReducer(state, action) {
 
     // Replace the entire day data (e.g. after loading from API)
     case ACTION.RESTORE_DAY:
-      return { ...createEmptyDayData(), ...action.data };
+      // Older saved days have tasks without ids; add them (other fields untouched).
+      return normalizeDayTodos({ ...createEmptyDayData(), ...action.data });
 
     // Reset to empty
     case ACTION.CLEAR_DAY:

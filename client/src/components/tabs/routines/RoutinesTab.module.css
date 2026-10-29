@@ -148,6 +148,102 @@
   background: var(--accent-light);
 }
 
+/* ========== ROUTINE ROW ACTIONS ========== */
+
+.routineCol {
+  min-width: 0;
+}
+
+.routineRow {
+  margin-bottom: 6px;
+}
+
+.routineRow .routineTask {
+  margin-bottom: 0;
+}
+
+.routineMenuBtn {
+  background: none;
+  border: none;
+  color: #bbb;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  padding: 0 4px;
+  border-radius: 5px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.routineMenuBtn:hover,
+.routineMenuBtnOpen {
+  color: var(--accent);
+  background: var(--accent-light);
+}
+
+.routineActionStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 5px 0 2px 8px;
+}
+
+.routineActionBtn {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-family: inherit;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.routineActionBtn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-light);
+}
+
+.routineActionBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ========== PER-COLUMN LOAD BUTTON ========== */
+
+.colLoadBtn {
+  margin-top: 6px;
+  width: 100%;
+  padding: 7px 8px;
+  border-radius: 8px;
+  border: 1px solid currentColor;
+  background: white;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--accent);
+}
+
+.colLoadBtn.work {
+  color: #3a4a2e;
+}
+
+.colLoadBtn.health {
+  color: #6b7c3f;
+}
+
+.colLoadBtn.personal {
+  color: #7a8c5a;
+}
+
+.colLoadBtn:hover {
+  background: var(--accent-light);
+}
+
 /* ========== ROUTINE ACTIONS ========== */
 
 .routineActions {
@@ -230,7 +326,10 @@
     display: none;
   }
 
-  .routineRemove {
+  .routineRemove,
+  .routineMenuBtn,
+  .routineActionStrip,
+  .colLoadBtn {
     display: none;
   }
 
